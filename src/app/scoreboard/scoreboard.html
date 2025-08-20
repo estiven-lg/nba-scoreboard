@@ -1,0 +1,61 @@
+<div class="w-full h-screen bg-black flex flex-col items-center justify-center p-4">
+    
+    <!-- Layout principal con 3 columnas -->
+    <div class="grid grid-cols-3 w-full h-full max-w-6xl gap-8 items-center py-12">
+        
+        <!-- Columna LOCAL -->
+        <div class="h-full py-12 flex flex-col items-center border-red-500 analog-border">
+            <div class="text-2xl text-white font-bold leading-0">LOCAL</div>
+            <div class="text-7xl analog-display text-green-400">{{ homeScore }}</div>
+            
+            <!-- Imagen del equipo local -->
+            <div class="flex-1 w-full p-4">
+                <img src="{{ homeTeamLogo }}" alt="Logo Local" class="flex-1 object-contain">
+            </div>
+            
+            <div class="flex flex-col items-center">
+                <div class="analog-display text-5xl text-amber-400 shadow-amber-400">{{ homeFouls }}</div>
+                <div class="text-white text-lg">FALTAS</div>
+            </div>
+        </div>
+
+        <!-- Columna CENTRAL -->
+        <div class="flex flex-col items-center space-y-6">
+            <!-- Período -->
+            <div class="flex flex-col items-center">
+                <span class="text-2xl text-white">PERIODO</span>
+                <span class="text-5xl text-white analog-display shadow-white">{{ period }}</span>
+            </div>
+            
+            <!-- Reloj -->
+            <div class="text-8xl analog-display">{{ time }}</div>
+            
+            <!-- Jugador con falta -->
+            <div class="flex flex-col items-center text-white">
+                <div class="flex items-center space-x-4 analog-display text-blue-600">
+                    <div class="text-4xl">{{ player }}</div>
+                    <div class="text-4xl">{{ playerFoul }}</div>
+                </div>
+                <div class="text-lg">JUGADOR - FALTA</div>
+            </div>
+        </div>
+
+        <!-- Columna VISITANTE -->
+        <div class="h-full py-12 flex flex-col items-center border-red-500 analog-border">
+            <div class="text-2xl text-white font-bold leading-0">VISITANTE</div>
+            <div class="text-7xl text-green-400 analog-display shadow-blue-400">{{ awayScore }}</div>
+            
+            <!-- Imagen del equipo visitante -->
+            <div class="flex-1 w-full p-4">
+                <img src="{{ awayTeamLogo }}" alt="Logo Visitante" class="flex-1 object-contain">
+            </div>
+            
+            <div class="flex flex-col items-center">
+                <div class="analog-display text-5xl text-amber-400 shadow-amber-400">{{ awayFouls }}</div>
+                <div class="text-white text-lg">FALTAS</div>
+            </div>
+        </div>
+        
+    </div>
+
+</div>
