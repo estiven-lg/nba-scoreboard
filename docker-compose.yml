@@ -1,0 +1,33 @@
+services:
+  frontend:
+    build:
+      context: ./front-end
+      dockerfile: Dockerfile
+    container_name: front-nba-scoreboard
+    ports:
+      - "${front_port}:80"
+
+  # ¡ESPACIO PARA FUTUROS SERVICIOS!
+  # Por ejemplo, cuando agregues un backend y una DB:
+  #
+  # backend:
+  #   build: ./backend
+  #   ports:
+  #     - "3000:3000"
+  #   environment:
+  #     - DATABASE_URL=postgresql://user:password@db:5432/mydb
+  #   depends_on:
+  #     - db
+  #
+  # db:
+  #   image: postgres:13
+  #   environment:
+  #     POSTGRES_DB: mydb
+  #     POSTGRES_USER: user
+  #     POSTGRES_PASSWORD: password
+  #   volumes:
+  #     - postgres_data:/var/lib/postgresql/data
+
+# ¡ESPACIO PARA VOLÚMENES PARA FUTUROS SERVICIOS!
+# volumes:
+#   postgres_data:
