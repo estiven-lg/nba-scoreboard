@@ -45,7 +45,7 @@ export class Scoreboard implements OnInit, OnDestroy {
 
         // Configurar el temporizador si hay periodStartTime
         if (data.periodStartTime) {
-          this.periodStartTime = new  Date(format(parseISO(data.periodStartTime), 'yyyy-MM-dd HH:mm:ss.SSS'));
+          this.periodStartTime = new  Date(data.periodStartTime + 'Z');
           this.startTimer();
         }
       });

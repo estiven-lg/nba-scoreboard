@@ -1,205 +1,345 @@
-<div class="container mx-auto mt-4 space-y-6">
+<div class="min-h-screen bg-gray-900 text-white p-6">
+  <div class="max-w-7xl mx-auto space-y-6">
 
-  <form [formGroup]="controlForm" class="space-y-6">
+    <h1 class="text-3xl font-bold text-center mb-8 text-blue-400">🏀 Panel de Control NBA</h1>
 
-    <!-- ⚙️ Configuración Inicial -->
-    <h3 class="text-lg font-semibold">⚙️ Configuración Inicial</h3>
+    <form [formGroup]="controlForm" class="space-y-6">
 
-    <!-- 🔄 Continuar un partido existente -->
-    <div class="flex flex-wrap gap-2 mb-3">
-      <input
-        type="number"
-        class="border rounded px-3 py-2 w-40"
-        placeholder="ID del partido"
-        [(ngModel)]="existingGameId"
-        [ngModelOptions]="{standalone: true}"
-      />
+      <!-- ⚙️ Configuración Inicial - Solo para nuevo juego -->
+      <div *ngIf="isNewGame" class="bg-gray-800 rounded-lg p-6 border border-gray-700 shadow-xl">
+        <h3 class="text-xl font-semibold mb-4 text-blue-400 flex items-center">
+          <span class="mr-2">⚙️</span> Crear Nuevo Partido
+        </h3>
 
-      <button
-        class="bg-blue-600 text-white rounded px-4 py-2 hover:bg-blue-700"
-        (click)="continueGame()"
-        [disabled]="!existingGameId"
-      >
-        Continuar Partido
-      </button>
-    </div>
+        <!-- Selección de equipos -->
+        <div class="bg-gray-700 rounded-lg p-4">
+          <h4 class="text-lg font-medium mb-3 text-green-400">🏆 Nuevo Partido</h4>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+            <div>
+              <label class="block mb-2 text-gray-300 font-medium">🏠 Equipo Local</label>
+              <select class="w-full bg-gray-600 border border-gray-500 rounded px-3 py-2 text-white focus:border-blue-500 focus:outline-none" formControlName="homeTeam" (change)="onTeamChange()">
+                <option value="">Seleccione equipo</option>
+                <option *ngFor="let team of homeTeams; trackBy: trackByTeamId" [value]="team.teamId">
+                  {{ team.name }} ({{ team.city }})
+                </option>
+              </select>
+            </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-3">
-      <div>
-        <label class="block mb-1">Equipo Local</label>
-        <select class="w-full border rounded px-3 py-2" formControlName="homeTeam" (change)="onTeamChange()" >
-          <option value="">Seleccione equipo</option>
-          <option *ngFor="let team of homeTeams; trackBy: trackByTeamId" [value]="team.teamId">
-            {{ team.name }} ({{ team.city }})
-          </option>
-        </select>
+            <div>
+              <label class="block mb-2 text-gray-300 font-medium">✈️ Equipo Visitante</label>
+              <select class="w-full bg-gray-600 border border-gray-500 rounded px-3 py-2 text-white focus:border-blue-500 focus:outline-none" formControlName="visitorTeam" (change)="onTeamChange()">
+                <option value="">Seleccione equipo</option>
+                <option *ngFor="let team of visitorTeams; trackBy: trackByTeamId" [value]="team.teamId">
+                  {{ team.name }} ({{ team.city }})
+                </option>
+              </select>
+            </div>
+          </div>
+
+          <div class="flex flex-wrap gap-3">
+            <button
+              class="bg-purple-600 text-white rounded px-6 py-2 hover:bg-purple-700 transition-colors duration-200 font-medium"
+              (click)="createGame()"
+              [disabled]="!controlForm.valid || !canInteract"
+            >
+              Crear Partido
+            </button>
+            <div *ngIf="errorMessage" class="bg-red-600 text-white px-4 py-2 rounded flex items-center">
+              <span class="mr-2">⚠️</span>{{ errorMessage }}
+            </div>
+          </div>
+        </div>
       </div>
 
-      <div>
-        <label class="block mb-1">Equipo Visitante</label>
-        <select class="w-full border rounded px-3 py-2" formControlName="visitorTeam" (change)="onTeamChange()" >
-          <option value="">Seleccione equipo</option>
-          <option *ngFor="let team of visitorTeams; trackBy: trackByTeamId" [value]="team.teamId">
-            {{ team.name }} ({{ team.city }})
-          </option>
-        </select>
+      <!-- ⚙️ Configuración para partidos existentes -->
+      <div *ngIf="!isNewGame" class="bg-gray-800 rounded-lg p-6 border border-gray-700 shadow-xl">
+        <h3 class="text-xl font-semibold mb-4 text-blue-400 flex items-center">
+          <span class="mr-2">⚙️</span> Panel de Control - Partido {{ currentGameId }}
+        </h3>
+
+        <!-- Información de los equipos en juego -->
+        <div *ngIf="gameState" class="bg-gray-700 rounded-lg p-4 mb-4">
+          <h4 class="text-lg font-medium mb-3 text-green-400">🏆 Equipos en Juego</h4>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="bg-green-600 rounded-lg p-4 text-center">
+              <div class="text-green-100 text-sm font-medium">🏠 EQUIPO LOCAL</div>
+              <div class="text-white font-bold text-xl mt-1">
+                {{ gameState?.homeTeam?.name }}
+              </div>
+              <div class="text-green-200 text-sm">{{ gameState?.homeTeam?.city }}</div>
+              <div class="text-green-100 text-3xl font-bold mt-2">{{ gameState?.homeScore }}</div>
+            </div>
+            
+            <div class="bg-blue-600 rounded-lg p-4 text-center">
+              <div class="text-blue-100 text-sm font-medium">✈️ EQUIPO VISITANTE</div>
+              <div class="text-white font-bold text-xl mt-1">
+                {{ gameState?.awayTeam?.name }}
+              </div>
+              <div class="text-blue-200 text-sm">{{ gameState?.awayTeam?.city }}</div>
+              <div class="text-blue-100 text-3xl font-bold mt-2">{{ gameState?.awayScore }}</div>
+            </div>
+          </div>
+          
+          <!-- Estado del partido -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+            <div class="bg-gray-600 rounded p-3 text-center">
+              <p class="text-gray-300 text-sm">Estado</p>
+              <p class="text-white font-bold">{{ getGameStatusName(gameState?.gameStatus) }}</p>
+            </div>
+            <div class="bg-gray-600 rounded p-3 text-center">
+              <p class="text-gray-300 text-sm">Período</p>
+              <p class="text-white font-bold">{{ gameState?.currentPeriod }}</p>
+            </div>
+            <div class="bg-gray-600 rounded p-3 text-center">
+              <p class="text-gray-300 text-sm">Fecha</p>
+              <p class="text-white font-bold text-sm">{{ gameState?.gameDate | date:'short' }}</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- 🔄 Continuar un partido existente -->
+        <div class="bg-gray-700 rounded-lg p-4 mb-4">
+          <h4 class="text-lg font-medium mb-3 text-yellow-400">🔄 Cargar Otro Partido</h4>
+          <div class="flex flex-wrap gap-3">
+            <input
+              type="number"
+              class="bg-gray-600 border border-gray-500 rounded px-3 py-2 w-40 text-white placeholder-gray-400 focus:border-blue-500 focus:outline-none"
+              placeholder="ID del partido"
+              [(ngModel)]="existingGameId"
+              [ngModelOptions]="{standalone: true}"
+            />
+            <button
+              class="bg-blue-600 text-white rounded px-6 py-2 hover:bg-blue-700 transition-colors duration-200 font-medium"
+              (click)="continueGame()"
+              [disabled]="!existingGameId"
+            >
+              Cargar Partido
+            </button>
+          </div>
+        </div>
       </div>
-    </div>
 
-    <div class="flex flex-wrap gap-2 mb-3">
-      <button
-        class="bg-purple-600 text-white rounded px-4 py-2 hover:bg-purple-700"
-        (click)="createGame()"
-        [disabled]="!controlForm.valid || !canInteract"
-      >
-        Crear Partido
-      </button>
-      <div *ngIf="errorMessage" class="text-red-600 mb-2">
-        {{ errorMessage }}
-      </div>
-    </div>
+      <!-- 🏆 Flujo del Partido - Solo para partidos existentes -->
+      <div *ngIf="!isNewGame" class="bg-gray-800 rounded-lg p-6 border border-gray-700 shadow-xl">
+        <h3 class="text-xl font-semibold mb-4 text-blue-400 flex items-center">
+          <span class="mr-2">🏆</span> Control del Partido
+        </h3>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+          <div>
+            <label class="block mb-2 text-gray-300 font-medium">⏱️ Duración del periodo (minutos)</label>
+            <input type="number" class="w-full bg-gray-600 border border-gray-500 rounded px-3 py-2 text-white focus:border-blue-500 focus:outline-none" formControlName="periodMinutes" />
+          </div>
+          <div>
+            <label class="block mb-2 text-gray-300 font-medium">📊 Estado del partido</label>
+            <input type="text" class="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-gray-300" formControlName="gameStatus" [value]="getGameStatusName(controlForm.value.gameStatus)" readonly />
+          </div>
+          <div>
+            <label class="block mb-2 text-gray-300 font-medium">🔢 Periodo Actual</label>
+            <input type="text" class="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 text-gray-300" [value]="currentQuarter + '/' + quartersTotal" readonly />
+          </div>
+        </div>
 
-    <div *ngIf="!gameId" class="text-red-600 mb-3">
-      ⚠️ Debe crear un juego antes de iniciar el partido.
-    </div>
-
-    <!-- 🏆 Flujo del Partido -->
-    <h3 class="text-lg font-semibold">🏆 Flujo del Partido</h3>
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-3">
-      <div>
-        <label class="block mb-1">Duración del periodo (minutos)</label>
-        <input type="number" class="w-full border rounded px-3 py-2" formControlName="periodMinutes"  />
-      </div>
-      <div>
-        <label class="block mb-1">Estado del partido</label>
-        <input type="text" class="w-full border rounded px-3 py-2 bg-gray-100" formControlName="gameStatus" [value]="getGameStatusName(controlForm.value.gameStatus)" readonly />
-      </div>
-      <div>
-        <label class="block mb-1">Periodo Actual</label>
-        <input type="text" class="w-full border rounded px-3 py-2 bg-gray-100" [value]="currentQuarter + '/' + quartersTotal" readonly />
-      </div>
-    </div>
-
-    <!-- Botones de Control -->
-    <div class="flex flex-wrap gap-2 mb-3">
-      <button class="bg-green-600 text-white rounded px-4 py-2 hover:bg-green-700" (click)="startGame()" [disabled]="!gameId || !canInteract">Iniciar Partido</button>
-      <button class="bg-orange-500 text-white rounded px-4 py-2 hover:bg-orange-600" (click)="pauseGame()" [disabled]="!gameId || !canInteract">Pausar</button>
-      <button class="bg-blue-600 text-white rounded px-4 py-2 hover:bg-blue-700" (click)="resumeGame()" [disabled]="!gameId || !canInteract">Reanudar</button>
-      <button class="bg-gray-600 text-white rounded px-4 py-2 hover:bg-gray-700" (click)="resetPeriod()" [disabled]="!gameId || !canInteract">Reiniciar Periodo</button>
-      <button class="bg-teal-500 text-white rounded px-4 py-2 hover:bg-teal-600" (click)="nextQuarter()" [disabled]="!gameId || !canInteract">Siguiente Periodo</button>
-      <button class="bg-red-600 text-white rounded px-4 py-2 hover:bg-red-700" (click)="suspendGame()" [disabled]="!gameId || !canInteract">Suspender</button>
-      <button
-        class="bg-black text-white rounded px-4 py-2 hover:bg-gray-800"
-        (click)="finishGame()"
-        [disabled]="!gameId || !canInteract || controlForm.value.gameStatus === GameStatus.FINISHED"
-      >
-        🔚 Finalizar Partido
-      </button>
-    </div>
-
-    <hr class="my-4 border-gray-300" />
-
-    <!-- ⛹️‍♂️ Anotaciones y Faltas -->
-    <h3 class="text-lg font-semibold">⛹️‍♂️ Anotaciones y Faltas</h3>
-
-    <!-- Puntos -->
-    <div class="flex flex-wrap gap-2 mb-3">
-      <h5 class="w-full">Puntos</h5>
-      <button class="bg-green-600 text-white rounded px-4 py-2 hover:bg-green-700" (click)="addPoints('home', 2)" [disabled]="!canInteract">🏠 Local +2</button>
-      <button class="bg-green-600 text-white rounded px-4 py-2 hover:bg-green-700" (click)="addPoints('home', 3)" [disabled]="!canInteract">🏠 Local +3</button>
-      <button class="bg-blue-600 text-white rounded px-4 py-2 hover:bg-blue-700" (click)="addPoints('visitor', 2)" [disabled]="!canInteract">✈️ Visitante +2</button>
-      <button class="bg-blue-600 text-white rounded px-4 py-2 hover:bg-blue-700" (click)="addPoints('visitor', 3)" [disabled]="!canInteract">✈️ Visitante +3</button>
-    </div>
-
-    <!-- Faltas de equipo -->
-    <div class="flex flex-wrap gap-2 mb-3">
-      <h5 class="w-full">Faltas de Equipo</h5>
-      <button class="bg-purple-600 text-white rounded px-4 py-2 hover:bg-purple-700" (click)="addTeamFoul('home')" [disabled]="!canInteract">🏠 Falta Equipo Local</button>
-      <button class="bg-indigo-600 text-white rounded px-4 py-2 hover:bg-indigo-700" (click)="addTeamFoul('visitor')" [disabled]="!canInteract">✈️ Falta Equipo Visitante</button>
-    </div>
-
-    <!-- Faltas Jugadores -->
-    <div class="flex flex-col md:flex-row gap-6 mb-3">
-      <div class="flex-1">
-        <label class="block mb-1">Jugador Local</label>
-        <div class="flex gap-2">
-          <select class="w-full border rounded px-3 py-2" formControlName="homePlayer" >
-            <option value="">Seleccione jugador</option>
-            <option *ngFor="let player of homePlayers; trackBy: trackByPlayerId" [value]="player.playerId">
-              {{ player.fullName }}
-            </option>
-          </select>
-          <button class="bg-red-600 text-white rounded px-4 py-2 hover:bg-red-700"
-                  (click)="addPlayerFoul(controlForm.value.homePlayer)"
-                  [disabled]="!controlForm.value.homePlayer || !canInteract">
-            🏠 Falta
+        <!-- Botones de Control -->
+        <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3">
+          <button class="bg-green-600 text-white rounded px-4 py-3 hover:bg-green-700 transition-colors duration-200 font-medium" (click)="startGame()" [disabled]="!gameId || !canInteract">
+            ▶️ Iniciar
+          </button>
+          <button class="bg-orange-500 text-white rounded px-4 py-3 hover:bg-orange-600 transition-colors duration-200 font-medium" (click)="pauseGame()" [disabled]="!gameId || !canInteract">
+            ⏸️ Pausar
+          </button>
+          <button class="bg-blue-600 text-white rounded px-4 py-3 hover:bg-blue-700 transition-colors duration-200 font-medium" (click)="resumeGame()" [disabled]="!gameId || !canInteract">
+            ⏯️ Reanudar
+          </button>
+          <button class="bg-gray-600 text-white rounded px-4 py-3 hover:bg-gray-700 transition-colors duration-200 font-medium" (click)="resetPeriod()" [disabled]="!gameId || !canInteract">
+            🔄 Reset
+          </button>
+          <button class="bg-teal-500 text-white rounded px-4 py-3 hover:bg-teal-600 transition-colors duration-200 font-medium" (click)="nextQuarter()" [disabled]="!gameId || !canInteract">
+            ⏭️ Siguiente
+          </button>
+          <button class="bg-red-600 text-white rounded px-4 py-3 hover:bg-red-700 transition-colors duration-200 font-medium" (click)="suspendGame()" [disabled]="!gameId || !canInteract">
+            ⏹️ Suspender
+          </button>
+          <button
+            class="bg-black text-white rounded px-4 py-3 hover:bg-gray-800 transition-colors duration-200 font-medium"
+            (click)="finishGame()"
+            [disabled]="!gameId || !canInteract || controlForm.value.gameStatus === GameStatus.FINISHED"
+          >
+            🔚 Finalizar
           </button>
         </div>
       </div>
 
-      <div class="flex-1">
-        <label class="block mb-1">Jugador Visitante</label>
-        <div class="flex gap-2">
-          <select class="w-full border rounded px-3 py-2" formControlName="visitorPlayer" >
-            <option value="">Seleccione jugador</option>
-            <option *ngFor="let player of visitorPlayers; trackBy: trackByPlayerId" [value]="player.playerId">
-              {{ player.fullName }}
-            </option>
-          </select>
-          <button class="bg-red-600 text-white rounded px-4 py-2 hover:bg-red-700"
-                  (click)="addPlayerFoul(controlForm.value.visitorPlayer)"
-                  [disabled]="!controlForm.value.visitorPlayer || !canInteract">
-            ✈️ Falta
-          </button>
+      <!-- ⛹️‍♂️ Anotaciones y Faltas - Solo para partidos existentes -->
+      <div *ngIf="!isNewGame" class="bg-gray-800 rounded-lg p-6 border border-gray-700 shadow-xl">
+        <h3 class="text-xl font-semibold mb-4 text-blue-400 flex items-center">
+          <span class="mr-2">⛹️‍♂️</span> Anotaciones y Faltas
+        </h3>
+
+        <!-- Puntos -->
+        <div class="bg-gray-700 rounded-lg p-4 mb-4">
+          <h4 class="text-lg font-medium mb-3 text-green-400 flex items-center">
+            <span class="mr-2">🏀</span> Puntos
+          </h4>
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+            <button class="bg-green-600 text-white rounded px-4 py-3 hover:bg-green-700 transition-colors duration-200 font-medium" (click)="addPoints('home', 2)" [disabled]="!canInteract">
+              🏠 Local +2
+            </button>
+            <button class="bg-green-600 text-white rounded px-4 py-3 hover:bg-green-700 transition-colors duration-200 font-medium" (click)="addPoints('home', 3)" [disabled]="!canInteract">
+              🏠 Local +3
+            </button>
+            <button class="bg-blue-600 text-white rounded px-4 py-3 hover:bg-blue-700 transition-colors duration-200 font-medium" (click)="addPoints('visitor', 2)" [disabled]="!canInteract">
+              ✈️ Visitante +2
+            </button>
+            <button class="bg-blue-600 text-white rounded px-4 py-3 hover:bg-blue-700 transition-colors duration-200 font-medium" (click)="addPoints('visitor', 3)" [disabled]="!canInteract">
+              ✈️ Visitante +3
+            </button>
+          </div>
+        </div>
+
+        <!-- Faltas de equipo -->
+        <div class="bg-gray-700 rounded-lg p-4 mb-4">
+          <h4 class="text-lg font-medium mb-3 text-yellow-400 flex items-center">
+            <span class="mr-2">🚨</span> Faltas de Equipo
+          </h4>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <button class="bg-purple-600 text-white rounded px-4 py-3 hover:bg-purple-700 transition-colors duration-200 font-medium" (click)="addTeamFoul('home')" [disabled]="!canInteract">
+              🏠 Falta Equipo Local
+            </button>
+            <button class="bg-indigo-600 text-white rounded px-4 py-3 hover:bg-indigo-700 transition-colors duration-200 font-medium" (click)="addTeamFoul('visitor')" [disabled]="!canInteract">
+              ✈️ Falta Equipo Visitante
+            </button>
+          </div>
+        </div>
+
+        <!-- Faltas Jugadores -->
+        <div class="bg-gray-700 rounded-lg p-4">
+          <h4 class="text-lg font-medium mb-3 text-red-400 flex items-center">
+            <span class="mr-2">👤</span> Faltas de Jugadores
+          </h4>
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div>
+              <label class="block mb-2 text-gray-300 font-medium">🏠 Jugador Local</label>
+              <div class="flex gap-2">
+                <select class="flex-1 bg-gray-600 border border-gray-500 rounded px-3 py-2 text-white focus:border-blue-500 focus:outline-none" formControlName="homePlayer">
+                  <option value="">Seleccione jugador</option>
+                  <option *ngFor="let player of homePlayers; trackBy: trackByPlayerId" [value]="player.playerId">
+                    {{ player.fullName }}
+                  </option>
+                </select>
+                <button class="bg-red-600 text-white rounded px-4 py-2 hover:bg-red-700 transition-colors duration-200 font-medium"
+                        (click)="addPlayerFoul(controlForm.value.homePlayer)"
+                        [disabled]="!controlForm.value.homePlayer || !canInteract">
+                  🚨 Falta
+                </button>
+              </div>
+            </div>
+
+            <div>
+              <label class="block mb-2 text-gray-300 font-medium">✈️ Jugador Visitante</label>
+              <div class="flex gap-2">
+                <select class="flex-1 bg-gray-600 border border-gray-500 rounded px-3 py-2 text-white focus:border-blue-500 focus:outline-none" formControlName="visitorPlayer">
+                  <option value="">Seleccione jugador</option>
+                  <option *ngFor="let player of visitorPlayers; trackBy: trackByPlayerId" [value]="player.playerId">
+                    {{ player.fullName }}
+                  </option>
+                </select>
+                <button class="bg-red-600 text-white rounded px-4 py-2 hover:bg-red-700 transition-colors duration-200 font-medium"
+                        (click)="addPlayerFoul(controlForm.value.visitorPlayer)"
+                        [disabled]="!controlForm.value.visitorPlayer || !canInteract">
+                  🚨 Falta
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
 
-    <hr class="my-4 border-gray-300" />
+      <!-- 📊 Estado del Juego - Solo para partidos existentes -->
+      <div *ngIf="!isNewGame" class="bg-gray-800 rounded-lg p-6 border border-gray-700 shadow-xl">
+        <h3 class="text-xl font-semibold mb-4 text-blue-400 flex items-center">
+          <span class="mr-2">📊</span> Estado del Juego
+        </h3>
+        
+        <div *ngIf="gameState; else noData" class="bg-gray-700 rounded-lg p-4">
+          
+          <!-- Info básica del juego -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+            <div class="bg-gray-600 rounded p-3">
+              <p class="text-gray-300 text-sm">ID del Juego</p>
+              <p class="text-white font-bold text-lg">{{ gameState?.gameId }}</p>
+            </div>
+            <div class="bg-gray-600 rounded p-3">
+              <p class="text-gray-300 text-sm">Estado</p>
+              <p class="text-white font-bold text-lg">{{ getGameStatusName(gameState?.gameStatus) }}</p>
+            </div>
+            <div class="bg-gray-600 rounded p-3">
+              <p class="text-gray-300 text-sm">Período Actual</p>
+              <p class="text-white font-bold text-lg">{{ gameState?.currentPeriod }}</p>
+            </div>
+          </div>
 
-    <!-- 📊 Estado del Juego -->
-    <h3 class="text-lg font-semibold mt-6">📊 Estado del Juego</h3>
-    <div *ngIf="gameState; else noData" class="border rounded p-4 bg-gray-50">
+          <!-- Marcador -->
+          <div class="bg-gray-600 rounded-lg p-4 mb-4">
+            <h4 class="font-semibold mb-3 text-green-400 flex items-center">
+              <span class="mr-2">📌</span> Marcador
+            </h4>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div class="bg-green-700 rounded p-3">
+                <p class="text-green-100 text-sm">🏠 Local</p>
+                <p class="text-white font-bold text-2xl">{{ gameState?.homeTeam?.name }} ({{ gameState?.homeTeam?.city }})</p>
+                <p class="text-green-200 font-bold text-3xl">{{ gameState?.homeScore }}</p>
+              </div>
+              <div class="bg-blue-700 rounded p-3">
+                <p class="text-blue-100 text-sm">✈️ Visitante</p>
+                <p class="text-white font-bold text-2xl">{{ gameState?.awayTeam?.name }} ({{ gameState?.awayTeam?.city }})</p>
+                <p class="text-blue-200 font-bold text-3xl">{{ gameState?.awayScore }}</p>
+              </div>
+            </div>
+          </div>
 
-      <p><b>ID:</b> {{ gameState?.gameId }}</p>
-      <p><b>Fecha:</b> {{ gameState?.gameDate | date:'short' }}</p>
-      <p><b>Estado:</b> {{ getGameStatusName(gameState?.gameStatus) }}</p>
-      <p><b>Período actual:</b> {{ gameState?.currentPeriod }}</p>
-      <p><b>Tiempo restante:</b> {{ gameState?.remainingTime }} seg</p>
+          <!-- Faltas -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="bg-gray-600 rounded-lg p-4">
+              <h4 class="font-semibold mb-3 text-yellow-400 flex items-center">
+                <span class="mr-2">🚨</span> Faltas de Equipo
+              </h4>
+              <div class="space-y-2">
+                <div *ngFor="let foul of gameState?.teamFouls" class="bg-gray-700 rounded p-2">
+                  <span class="text-gray-300">{{ foul.team?.name }} - Período {{ foul.period }}:</span>
+                  <span class="text-white font-bold ml-2">{{ foul.totalFouls }}</span>
+                </div>
+              </div>
+            </div>
 
-      <h4 class="font-semibold mt-4">📌 Marcador</h4>
-      <p>🏠 {{ gameState?.homeTeam?.name }} ({{ gameState?.homeTeam?.city }}): 
-        <b>{{ gameState?.homeScore }}</b></p>
-      <p>✈️ {{ gameState?.awayTeam?.name }} ({{ gameState?.awayTeam?.city }}): 
-        <b>{{ gameState?.awayScore }}</b></p>
+            <div class="bg-gray-600 rounded-lg p-4">
+              <h4 class="font-semibold mb-3 text-red-400 flex items-center">
+                <span class="mr-2">⛹️‍♂️</span> Faltas de Jugadores
+              </h4>
+              <div class="space-y-2">
+                <div *ngFor="let foul of gameState?.playerFouls" class="bg-gray-700 rounded p-2">
+                  <span class="text-gray-300">Jugador #{{ foul.playerId }} - Período {{ foul.period }}:</span>
+                  <span class="text-white font-bold ml-2">{{ foul.foulCount }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
 
-      <h4 class="font-semibold mt-4">🚨 Faltas de Equipo</h4>
-      <ul>
-        <li *ngFor="let foul of gameState?.teamFouls">
-          {{ foul.team?.name }} - Período {{ foul.period }}: 
-          <b>{{ foul.totalFouls }}</b>
-        </li>
-      </ul>
+        <ng-template #noData>
+          <div class="bg-gray-700 rounded-lg p-8 text-center">
+            <span class="text-6xl mb-4 block">🏀</span>
+            <p class="text-gray-400 text-lg">No hay estado de juego cargado aún.</p>
+          </div>
+        </ng-template>
 
-      <h4 class="font-semibold mt-4">⛹️‍♂️ Faltas de Jugadores</h4>
-      <ul>
-        <li *ngFor="let foul of gameState?.playerFouls">
-          Jugador #{{ foul.playerId }} - Período {{ foul.period }}: 
-          <b>{{ foul.foulCount }}</b>
-        </li>
-      </ul>
+        <button class="bg-blue-600 text-white rounded px-6 py-3 mt-4 hover:bg-blue-700 transition-colors duration-200 font-medium"
+                (click)="getFinalState()"
+                [disabled]="!gameId || !canInteract">
+          🔄 Actualizar Estado
+        </button>
+      </div>
 
-    </div>
-
-    <ng-template #noData>
-      <p class="text-gray-500">No hay estado de juego cargado aún.</p>
-    </ng-template>
-
-    <button class="bg-blue-600 text-white rounded px-4 py-2 mt-3 hover:bg-blue-700"
-            (click)="getFinalState()"
-            [disabled]="!gameId || !canInteract">
-      Estado Final
-    </button>
-
-  </form>
+    </form>
+  </div>
 </div>

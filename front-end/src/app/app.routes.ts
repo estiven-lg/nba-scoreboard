@@ -5,11 +5,9 @@ import { GameList } from './game-list/game-list';
 
 
 export const routes: Routes = [
-    { path: '', redirectTo: 'scoreboard', pathMatch: 'full' },
-    { path: 'scoreboard', component: Scoreboard },
-    { path: 'control-panel', component: ControlPanelComponent },
+    { path: '', redirectTo: 'games', pathMatch: 'full' },
     { path: 'scoreboard/:id', component: Scoreboard },
-    { path: 'control-panel', component: ControlPanelComponent },
+    { path: 'control-panel/:id', component: ControlPanelComponent },
     { path: 'games', component: GameList },
-    { path: '**', redirectTo: 'scoreboard' }
+    { path: '**', redirectTo: 'games' }
 ];
