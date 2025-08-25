@@ -1,0 +1,29 @@
+<div class="bg-gray-900 text-white min-h-screen p-6">
+  <h2 class="text-3xl font-bold mb-6">Partidos de la NBA</h2>
+  
+  <div class="grid gap-4">
+  <div *ngFor="let game of games" class="bg-gray-800 p-4 rounded-lg shadow-lg flex items-center justify-between hover:bg-gray-700 transition cursor-pointer" (click)="irAScoreboard(game.gameId)">
+      <!-- Equipos -->
+      <div class="flex items-center space-x-6">
+        <img [src]="game.homeTeam.logoUrl" alt="Home Logo" class="h-12 w-12">
+        <div class="text-right">
+          <h3 class="text-xl font-bold">{{ game.homeTeam.name }}</h3>
+          <p class="text-lg text-green-400">{{ game.homeScore }}</p>
+        </div>
+      </div>
+
+      <div class="text-center">
+        <p class="text-gray-400">{{ game.gameDate | date:'short' }}</p>
+        <p class="text-yellow-400">Periodo: {{ game.currentPeriod }}</p>
+      </div>
+
+      <div class="flex items-center space-x-6">
+        <div class="text-left">
+          <h3 class="text-xl font-bold">{{ game.awayTeam.name }}</h3>
+          <p class="text-lg text-red-400">{{ game.awayScore }}</p>
+        </div>
+        <img [src]="game.awayTeam.logoUrl" alt="Away Logo" class="h-12 w-12">
+      </div>
+    </div>
+  </div>
+</div>
