@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ScoreboardService } from '../services/scoreboard.service';
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Api } from '../api/api';
 
 enum GameStatus {
@@ -45,7 +45,8 @@ export class ControlPanelComponent implements OnInit {
     private scoreboardService: ScoreboardService,
     private cd: ChangeDetectorRef,
     private route: ActivatedRoute,
-    private api: Api
+    private api: Api,
+    private router: Router
   ) { }
 
   get gameId() {
@@ -156,10 +157,18 @@ export class ControlPanelComponent implements OnInit {
       gameDate: new Date().toISOString()
     };
 
+    
     this.api.createGame(payload).subscribe({
       next: (res: any) => {
         const gameId = res.gameId ?? res.id;
-        // this.api.setGameId(gameId, this.currentGameId);
+        
+        // Actualizar el ID actual y navegar a la nueva URL
+        this.currentGameId = gameId.toString();
+        this.router.navigate(['/control-panel', gameId]);
+        
+        // Cargar los datos del juego recién creado
+        this.loadGameData(gameId.toString());
+        
         this.controlForm.patchValue({ gameStatus: 'created' });
       },
       error: (err) => {

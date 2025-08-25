@@ -19,6 +19,14 @@ export class GameList {
     this.router.navigate(['/scoreboard', id]);
   }
 
+  irAControlPanel(id: number) {
+    this.router.navigate(['/control-panel', id]);
+  }
+
+  crearNuevoJuego() {
+    this.router.navigate(['/control-panel', 'new']);
+  }
+
   ngOnInit(): void {
     this.api.getDatos().subscribe((games:any) => {
       console.log(games);
