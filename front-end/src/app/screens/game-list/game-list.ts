@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { Api } from '../api/api';
+import { Api } from '@api/api';
 import { CommonModule, DatePipe } from '@angular/common';
 
 @Component({
@@ -28,7 +28,7 @@ export class GameList {
   }
 
   ngOnInit(): void {
-    this.api.getDatos().subscribe((games:any) => {
+    this.api.game.getDatos().subscribe((games:any) => {
       console.log(games);
       this.games = games;
     });

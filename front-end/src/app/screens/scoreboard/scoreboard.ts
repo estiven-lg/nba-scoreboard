@@ -1,6 +1,6 @@
 import { Component, Input, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Api } from '../api/api';
+import { Api } from '@api/api';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -34,7 +34,7 @@ export class Scoreboard implements OnInit, OnDestroy {
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
     if (id) {
-      this.api.getGameById(id).subscribe((data: any) => {
+      this.api.game.getGameById(id).subscribe((data: any) => {
         this.homeScore = data.homeScore;
         this.awayScore = data.awayScore;
         this.period = data.currentPeriod;

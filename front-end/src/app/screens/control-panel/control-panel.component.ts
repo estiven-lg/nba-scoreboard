@@ -1,10 +1,10 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ScoreboardService } from '../services/scoreboard.service';
+import { ScoreboardService } from '@services/scoreboard.service';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Api } from '../api/api';
+import { Api } from '@api/api';
 
 enum GameStatus {
   NOT_STARTED = 0,
@@ -83,7 +83,7 @@ export class ControlPanelComponent implements OnInit {
   }
 
   private loadGameData(gameId: string): void {
-    this.api.getGameById(gameId).subscribe((data: any) => {
+    this.api.game.getGameById(gameId).subscribe((data: any) => {
       this.gameState = data;
       this.currentQuarter = data.currentPeriod;
       this.existingGameId = data.gameId;
@@ -117,7 +117,7 @@ export class ControlPanelComponent implements OnInit {
   }
 
   loadTeams() {
-    this.api.getTeams().subscribe((res: any[]) => {
+    this.api.team.getTeams().subscribe((res: any[]) => {
       this.homeTeams = res;
       this.visitorTeams = res;
     });
@@ -127,11 +127,11 @@ export class ControlPanelComponent implements OnInit {
   // ⚙️ Setup
   // ====================
   createTeam(name: string, city: string, logoUrl: string) {
-    this.api.createTeam({ name, city, logoUrl }).subscribe();
+    this.api.team.createTeam({ name, city, logoUrl }).subscribe();
   }
 
   createPlayer(teamId: number, jerseyNumber: number, fullName: string, position: string) {
-    this.api.createPlayer({ teamId, jerseyNumber, fullName, position }).subscribe();
+    this.api.player.createPlayer({ teamId, jerseyNumber, fullName, position }).subscribe();
   }
 
   // ====================
@@ -157,8 +157,8 @@ export class ControlPanelComponent implements OnInit {
       gameDate: new Date().toISOString()
     };
 
-    
-    this.api.createGame(payload).subscribe({
+
+    this.api.game.createGame(payload).subscribe({
       next: (res: any) => {
         const gameId = res.gameId ?? res.id;
         
@@ -187,7 +187,7 @@ export class ControlPanelComponent implements OnInit {
   continueGame() {
     if (!this.existingGameId) return;
 
-    this.api.loadGameById(this.existingGameId).subscribe(res => {
+    this.api.game.loadGameById(this.existingGameId).subscribe(res => {
 
       // this.api.setGameId(res.gameId);
 
@@ -225,7 +225,7 @@ export class ControlPanelComponent implements OnInit {
   startGame() {
     if (!this.currentGameId || this.gameState?.gameStatus === GameStatus.FINISHED) return;
     const seconds = this.controlForm.value.periodMinutes * 60;
-    this.api.startGame(this.currentGameId, seconds).subscribe(() => {
+    this.api.game.startGame(this.currentGameId, seconds).subscribe(() => {
       this.controlForm.patchValue({ gameStatus: GameStatus.RUNNING });
       this.getFinalState();
     });
@@ -233,7 +233,7 @@ export class ControlPanelComponent implements OnInit {
 
   pauseGame() {
     if (!this.currentGameId) return;
-    this.api.pauseGame(this.currentGameId).subscribe(() => {
+    this.api.game.pauseGame(this.currentGameId).subscribe(() => {
       this.controlForm.patchValue({ gameStatus: GameStatus.PAUSED });
       this.updateControlsByGameStatus();
     });
@@ -241,7 +241,7 @@ export class ControlPanelComponent implements OnInit {
 
   resumeGame() {
     if (!this.currentGameId) return;
-    this.api.resumeGame(this.currentGameId).subscribe(() => {
+    this.api.game.resumeGame(this.currentGameId).subscribe(() => {
       this.controlForm.patchValue({ gameStatus: GameStatus.RUNNING });
       this.getFinalState();
       this.updateControlsByGameStatus();
@@ -252,7 +252,7 @@ export class ControlPanelComponent implements OnInit {
     console.log(this.currentGameId);
     if (!this.currentGameId) return;
     const seconds = this.controlForm.value.periodMinutes * 60;
-    this.api.resetPeriod(this.currentGameId, seconds).subscribe(() => {
+    this.api.game.resetPeriod(this.currentGameId, seconds).subscribe(() => {
       this.getFinalState();
       this.updateControlsByGameStatus();
     });
@@ -260,7 +260,7 @@ export class ControlPanelComponent implements OnInit {
 
   nextQuarter() {
     if (!this.currentGameId) return;
-    this.api.nextPeriod(this.currentGameId).subscribe(() => {
+    this.api.game.nextPeriod(this.currentGameId).subscribe(() => {
       if (this.currentQuarter < this.quartersTotal) this.currentQuarter++;
       this.cd.detectChanges(); // Refresca UI
       this.getFinalState();
@@ -270,7 +270,7 @@ export class ControlPanelComponent implements OnInit {
 
   suspendGame() {
     if (!this.currentGameId) return;
-    this.api.finishGame(this.currentGameId).subscribe(res => {
+    this.api.game.finishGame(this.currentGameId).subscribe(res => {
       this.gameState = res;
       this.controlForm.patchValue({ gameStatus: res.gameStatus });
       this.updateControlsByGameStatus();
@@ -280,7 +280,7 @@ export class ControlPanelComponent implements OnInit {
   finishGame() {
     if (!this.currentGameId) return;
 
-    this.api.finishGame(this.currentGameId).subscribe(res => {
+    this.api.game.finishGame(this.currentGameId).subscribe(res => {
       this.gameState = res;
       this.controlForm.patchValue({ gameStatus: res.gameStatus });
       this.updateControlsByGameStatus();
@@ -289,12 +289,12 @@ export class ControlPanelComponent implements OnInit {
 
   saveGame() {
     if (!this.currentGameId) return;
-    this.api.saveGame(this.currentGameId).subscribe();
+    this.api.game.saveGame(this.currentGameId).subscribe();
   }
 
   getFinalState() {
     if (!this.currentGameId) return;
-    this.api.getFinalState(this.currentGameId).subscribe(res => {
+    this.api.game.getFinalState(this.currentGameId).subscribe(res => {
       this.gameState = res;
       this.updateControlsByGameStatus();
     });
@@ -305,7 +305,7 @@ export class ControlPanelComponent implements OnInit {
   // ====================
   addPoints(team: 'home' | 'visitor', points: number) {
     if (!this.currentGameId) return;
-    this.api.addPoints(this.currentGameId, team, points).subscribe(() => {
+    this.api.game.addPoints(this.currentGameId, team, points).subscribe(() => {
       this.getFinalState();
     });
   }
@@ -317,7 +317,7 @@ export class ControlPanelComponent implements OnInit {
       ? this.controlForm.value.homeTeam
       : this.controlForm.value.visitorTeam;
 
-    this.api.addTeamFoul(this.currentGameId, teamId, this.currentQuarter)
+    this.api.foul.addTeamFoul(this.currentGameId, teamId, this.currentQuarter)
       .subscribe(res => {
         this.getFinalState();
       });
@@ -326,14 +326,14 @@ export class ControlPanelComponent implements OnInit {
   addPlayerFoul(playerId: number) {
     if (!this.currentGameId) return;
 
-    this.api.addPlayerFoul(this.currentGameId, playerId, this.currentQuarter)
+    this.api.foul.addPlayerFoul(this.currentGameId, playerId, this.currentQuarter)
       .subscribe(() => {
         this.getFinalState();
       });
   }
 
   loadPlayers() {
-    this.api.getPlayers().subscribe((res: any[]) => {
+    this.api.player.getPlayers().subscribe((res: any[]) => {
       // Filtrar por equipo seleccionado
       const homeTeamId = this.controlForm.value.homeTeam;
       const visitorTeamId = this.controlForm.value.visitorTeam;
@@ -355,7 +355,7 @@ export class ControlPanelComponent implements OnInit {
     const homeId = this.controlForm.value.homeTeam;
     const visitorId = this.controlForm.value.visitorTeam;
 
-    this.api.getPlayers().subscribe(players => {
+    this.api.player.getPlayers().subscribe(players => {
       this.homePlayers = players.filter(p => p.teamId === Number(homeId));
       this.visitorPlayers = players.filter(p => p.teamId === Number(visitorId));
       console.log('Home players:', this.homePlayers);
