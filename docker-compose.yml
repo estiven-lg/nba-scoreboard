@@ -6,28 +6,32 @@ services:
     container_name: front-nba-scoreboard
     ports:
       - "${front_port}:80"
+  backend:
+    build:
+      context: ./back-end
+      dockerfile: Dockerfile
+    container_name: backend
+    env_file: .env
+    environment:
+      CONNECTION_STRING: "Server=db;Database=${MSSQL_DB};User Id=${MSSQL_USER};Password=${MSSQL_PASSWORD};TrustServerCertificate=True;"
+    ports:
+      - "5000:5000"
+    depends_on:
+      - db
 
-  # ¡ESPACIO PARA FUTUROS SERVICIOS!
-  # Por ejemplo, cuando agregues un backend y una DB:
-  #
-  # backend:
-  #   build: ./backend
-  #   ports:
-  #     - "3000:3000"
-  #   environment:
-  #     - DATABASE_URL=postgresql://user:password@db:5432/mydb
-  #   depends_on:
-  #     - db
-  #
-  # db:
-  #   image: postgres:13
-  #   environment:
-  #     POSTGRES_DB: mydb
-  #     POSTGRES_USER: user
-  #     POSTGRES_PASSWORD: password
-  #   volumes:
-  #     - postgres_data:/var/lib/postgresql/data
+  db:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: db
+    env_file: .env
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=${MSSQL_SA_PASSWORD}
+      - MSSQL_TCP_PORT=1433
 
-# ¡ESPACIO PARA VOLÚMENES PARA FUTUROS SERVICIOS!
-# volumes:
-#   postgres_data:
+    ports:
+      - "1434:1433"
+    volumes:
+      - sql_data:/var/opt/mssql
+
+volumes:
+  sql_data:
