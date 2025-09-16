@@ -16,9 +16,11 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 // Set connection string from environment variable
-var connectionString = Environment.GetEnvironmentVariable("CONNECTION_STRING");
-builder.Configuration["ConnectionStrings:DefaultConnection"] = connectionString;
-
+if (!builder.Environment.IsDevelopment())
+{
+    var connectionString = Environment.GetEnvironmentVariable("CONNECTION_STRING");
+    builder.Configuration["ConnectionStrings:DefaultConnection"] = connectionString;
+}
 
 // entity framework
 builder.Services.AddDbContext<ScoreboardDbContext>(options =>

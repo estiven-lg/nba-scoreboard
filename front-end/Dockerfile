@@ -11,15 +11,15 @@ RUN npm ci
 COPY . .
 
 
-RUN npm run build -- --configuration production
+RUN npm run build
 
 # Etapa 2: Servidor web para producción
 FROM nginx:alpine
 
 
+COPY nginx-custom.conf /etc/nginx/conf.d/default.conf
 COPY --from=builder /app/dist/nba-scoreboard/browser /usr/share/nginx/html
 
 
-# COPY nginx-custom.conf /etc/nginx/conf.d/default.conf
 
 EXPOSE 80

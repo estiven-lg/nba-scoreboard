@@ -3,9 +3,11 @@ services:
     build:
       context: ./front-end
       dockerfile: Dockerfile
-    container_name: front-nba-scoreboard
+    container_name: frontend
     ports:
       - "${front_port}:80"
+    depends_on:
+      - backend
   backend:
     build:
       context: ./back-end
@@ -13,7 +15,7 @@ services:
     container_name: backend
     env_file: .env
     environment:
-      CONNECTION_STRING: "Server=db;Database=${MSSQL_DB};User Id=${MSSQL_USER};Password=${MSSQL_PASSWORD};TrustServerCertificate=True;"
+      CONNECTION_STRING: "Server=db;Database=${MSSQL_DB};User Id=sa;Password=${MSSQL_SA_PASSWORD};TrustServerCertificate=True;"
     ports:
       - "5000:5000"
     depends_on:
