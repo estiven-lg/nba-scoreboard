@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 import { Scoreboard } from '@screens/scoreboard/scoreboard';
 import { ControlPanelComponent } from '@screens/control-panel/control-panel.component';
 import { GameList } from '@screens/game-list/game-list';
+import { PlayersList } from '@screens/players-list/players-list';
 
 
 export const routes: Routes = [
@@ -9,5 +10,6 @@ export const routes: Routes = [
     { path: 'scoreboard/:id', component: Scoreboard },
     { path: 'control-panel/:id', component: ControlPanelComponent },
     { path: 'games', component: GameList },
+    { path: 'players', component: PlayersList },
     { path: '**', redirectTo: 'games' }
 ];
