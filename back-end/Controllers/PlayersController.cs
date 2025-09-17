@@ -1,6 +1,7 @@
 using GameDataService.Models;
 using GameDataService.Services.interfaces;
 using Microsoft.AspNetCore.Mvc;
+using GameDataService.Models.DTOs;
 
 namespace GameDataService.Controllers;
 
@@ -15,50 +16,105 @@ public class PlayersController : ControllerBase
         _playerService = playerService;
     }
 
+
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<Player>>> GetAllPlayers()
+    public async Task<ActionResult<IEnumerable<PlayerReadDto>>> GetAllPlayers()
     {
         var players = await _playerService.GetAllAsync();
-        return Ok(players);
+        var dtos = players.Select(p => new PlayerReadDto
+        {
+            PlayerId = p.PlayerId,
+            FullName = p.FullName,
+            JerseyNumber = p.JerseyNumber,
+            Position = p.Position ?? "",
+            TeamId = p.TeamId,
+            Height = p.Height,
+            Age = p.Age,
+            Nationality = p.Nationality ?? ""
+        });
+        return Ok(dtos);
     }
+
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<Player>> GetPlayerById(int id)
+    public async Task<ActionResult<PlayerReadDto>> GetPlayerById(int id)
     {
-        var player = await _playerService.GetByIdAsync(id);
-        if (player == null)
-        {
+        var p = await _playerService.GetByIdAsync(id);
+        if (p == null)
             return NotFound();
-        }
-        return Ok(player);
+        var dto = new PlayerReadDto
+        {
+            PlayerId = p.PlayerId,
+            FullName = p.FullName,
+            JerseyNumber = p.JerseyNumber,
+            Position = p.Position ?? "",
+            TeamId = p.TeamId,
+            Height = p.Height,
+            Age = p.Age,
+            Nationality = p.Nationality ?? ""
+        };
+        return Ok(dto);
     }
+
 
     [HttpPost]
-    public async Task<ActionResult<Player>> CreatePlayer(Player player)
+    public async Task<ActionResult<PlayerReadDto>> CreatePlayer(PlayerWriteDto dto)
     {
+        var player = new Player
+        {
+            FullName = dto.FullName,
+            JerseyNumber = dto.JerseyNumber,
+            Position = dto.Position,
+            TeamId = dto.TeamId,
+            Height = dto.Height,
+            Age = dto.Age,
+            Nationality = dto.Nationality
+        };
         var createdPlayer = await _playerService.AddAsync(player);
-        return CreatedAtAction(
-            nameof(GetPlayerById),
-            new { id = createdPlayer.PlayerId },
-            createdPlayer
-        );
+        var readDto = new PlayerReadDto
+        {
+            PlayerId = createdPlayer.PlayerId,
+            FullName = dto.FullName,
+            JerseyNumber = createdPlayer.JerseyNumber,
+            Position = createdPlayer.Position ?? "",
+            TeamId = createdPlayer.TeamId,
+            Height = createdPlayer.Height,
+            Age = createdPlayer.Age,
+            Nationality = createdPlayer.Nationality ?? ""
+        };
+        return CreatedAtAction(nameof(GetPlayerById), new { id = readDto.PlayerId }, readDto);
     }
 
-    [HttpPut("{id}")]
-    public async Task<ActionResult<Player>> UpdatePlayer(int id, Player player)
-    {
-        if (id != player.PlayerId)
-        {
-            return BadRequest();
-        }
 
+    [HttpPut("{id}")]
+    public async Task<ActionResult<PlayerReadDto>> UpdatePlayer(int id, PlayerWriteDto dto)
+    {
+        var player = new Player
+        {
+            PlayerId = id,
+            FullName = dto.FullName,
+            JerseyNumber = dto.JerseyNumber,
+            Position = dto.Position,
+            TeamId = dto.TeamId,
+            Height = dto.Height,
+            Age = dto.Age,
+            Nationality = dto.Nationality
+        };
         var updatedPlayer = await _playerService.UpdateAsync(player);
         if (updatedPlayer == null)
-        {
             return NotFound();
-        }
-
-        return Ok(updatedPlayer);
+        var readDto = new PlayerReadDto
+        {
+            PlayerId = updatedPlayer.PlayerId,
+            FullName = dto.FullName,
+            JerseyNumber = updatedPlayer.JerseyNumber,
+            Position = updatedPlayer.Position ?? "",
+            TeamId = updatedPlayer.TeamId,
+            Height = updatedPlayer.Height,
+            Age = updatedPlayer.Age,
+            Nationality = updatedPlayer.Nationality ?? ""
+        };
+        return Ok(readDto);
     }
 
     [HttpDelete("{id}")]
