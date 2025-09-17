@@ -4,6 +4,7 @@ using GameDataService.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GameDataService.Migrations
 {
     [DbContext(typeof(ScoreboardDbContext))]
-    partial class ScoreboardDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250917020907_AddPlayerFields_HeightAgeNationality")]
+    partial class AddPlayerFields_HeightAgeNationality
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

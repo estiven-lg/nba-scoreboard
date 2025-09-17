@@ -20,6 +20,15 @@ public class Player
     [MaxLength(50)]
     public string? Position { get; set; }
 
+    [Range(0, 300)]
+    public int Height { get; set; } // altura en cm
+
+    [Range(0, 100)]
+    public int Age { get; set; }
+
+    [MaxLength(50)]
+    public string? Nationality { get; set; }
+
     [JsonIgnore]
     public Team? Team { get; set; }
 }
