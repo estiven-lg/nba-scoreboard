@@ -10,6 +10,7 @@ public class ScoreboardDbContext(DbContextOptions<ScoreboardDbContext> options) 
     public DbSet<Game> Games => Set<Game>();
     public DbSet<TeamFoul> TeamFouls => Set<TeamFoul>();
     public DbSet<PlayerFoul> PlayerFouls => Set<PlayerFoul>();
+    public DbSet<User> Users => Set<User>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
