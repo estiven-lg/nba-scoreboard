@@ -29,8 +29,12 @@ public class AuthController : ControllerBase
     {
         try
         {
-            var token = await _authService.LoginAsync(req.Email, req.Password);
-            return Ok(new { token });
+            var result = await _authService.LoginAsync(req.Email, req.Password);
+            return Ok(new { 
+                token = result.Token,
+                id = result.User.Id,
+                email = result.User.Email 
+            });
         }
         catch (Exception ex)
         {

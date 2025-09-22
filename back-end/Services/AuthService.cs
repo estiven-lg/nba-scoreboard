@@ -5,9 +5,11 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using GameDataService.Models;
+using GameDataService.Models.DTOs;
 using GameDataService.Repositories;
 using GameDataService.Repositories.interfaces;
 using GameDataService.Services.interfaces;
+
 
 namespace GameDataService.Services;
 
@@ -34,7 +36,7 @@ public class AuthService : IAuthService
         return await _userRepo.AddAsync(user);
     }
 
-    public async Task<string> LoginAsync(string email, string password)
+    public async Task<LoginResponseDto> LoginAsync(string email, string password)
     {
         var user = await _userRepo.GetByEmailAsync(email);
         if (user == null) throw new Exception("Invalid credentials");
@@ -56,6 +58,16 @@ public class AuthService : IAuthService
         };
 
         var token = tokenHandler.CreateToken(tokenDescriptor);
-        return tokenHandler.WriteToken(token);
+        var tokenString = tokenHandler.WriteToken(token);
+
+        return new LoginResponseDto
+        {
+            Token = tokenString,
+            User = new UserReadDto
+            {
+                Id = user.Id,
+                Email = user.Email
+            }
+        };
     }
 }
