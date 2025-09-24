@@ -10,6 +10,8 @@ services:
       - ./certs:/etc/nginx/certs:rw
       - ./vhost.d:/etc/nginx/vhost.d
       - ./html:/usr/share/nginx/html
+    networks:
+      - nba-vps
 
   letsencrypt:
     image: jrcs/letsencrypt-nginx-proxy-companion
@@ -23,6 +25,9 @@ services:
       - ./certs:/etc/nginx/certs:rw
       - ./vhost.d:/etc/nginx/vhost.d
       - ./html:/usr/share/nginx/html
+    networks:
+      - nba-vps
+      
   frontend:
     build:
       context: ./front-end
@@ -38,6 +43,9 @@ services:
       - LETSENCRYPT_EMAIL=laferre.estiven@gmail.com
       - HTTPS_METHOD=redirect
     restart: always
+    networks:
+      - nba-vps
+      
   backend:
     build:
       context: ./back-end
@@ -50,6 +58,8 @@ services:
       - "5000:5000"
     depends_on:
       - db
+    networks:
+      - nba-vps
 
   db:
     image: mcr.microsoft.com/mssql/server:2022-latest
@@ -64,6 +74,12 @@ services:
       - "1434:1433"
     volumes:
       - sql_data:/var/opt/mssql
+    networks:
+      - nba-vps
 
 volumes:
   sql_data:
+
+networks:
+  nba-vps:
+    driver: bridge
