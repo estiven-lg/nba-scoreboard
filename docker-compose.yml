@@ -52,6 +52,7 @@ services:
     env_file: .env
     environment:
       CONNECTION_STRING: "Server=db;Database=${MSSQL_DB};User Id=sa;Password=${MSSQL_SA_PASSWORD};TrustServerCertificate=True;"
+      JWT_SECRET: ${JWT_SECRET}
       VIRTUAL_HOST: api-nba-scoreboard.duckdns.org
       LETSENCRYPT_HOST: api-nba-scoreboard.duckdns.org
       LETSENCRYPT_EMAIL: laferre.estiven@gmail.com
