@@ -11,7 +11,7 @@ RUN npm ci
 COPY . .
 
 
-RUN npm run build -- --configuration production
+RUN npm run build 
 
 # Etapa 2: Servidor web para producción
 FROM nginx:alpine
