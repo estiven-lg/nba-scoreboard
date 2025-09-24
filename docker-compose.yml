@@ -54,12 +54,6 @@ services:
     environment:
       CONNECTION_STRING: "Server=db;Database=${MSSQL_DB};User Id=sa;Password=${MSSQL_SA_PASSWORD};TrustServerCertificate=True;"
       JWT_SECRET: ${JWT_SECRET}
-      # VIRTUAL_HOST: api2-nba-scoreboard.duckdns.org
-      # LETSENCRYPT_HOST: api2-nba-scoreboard.duckdns.org
-      # LETSENCRYPT_TEST: "true"
-      # LETSENCRYPT_EMAIL: laferre.estiven@gmail.com
-    # ports:
-      # - "5000:5000"
     expose:
       - "5000"
     depends_on:
