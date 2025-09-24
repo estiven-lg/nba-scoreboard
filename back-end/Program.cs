@@ -22,7 +22,9 @@ builder.Services.AddSwaggerGen();
 if (!builder.Environment.IsDevelopment())
 {
     var connectionString = Environment.GetEnvironmentVariable("CONNECTION_STRING");
+    var jwtSecret = Environment.GetEnvironmentVariable("JWT_SECRET");
     builder.Configuration["ConnectionStrings:DefaultConnection"] = connectionString;
+    builder.Configuration["JwtSecret"] = jwtSecret;
 }
 
 // entity framework
