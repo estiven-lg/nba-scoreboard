@@ -39,6 +39,7 @@ services:
       VIRTUAL_HOST: nba-scoreboard.duckdns.org
       LETSENCRYPT_HOST: nba-scoreboard.duckdns.org
       LETSENCRYPT_EMAIL: laferre.estiven@gmail.com
+      LETSENCRYPT_TEST: "true"
       HTTPS_METHOD: redirect
     restart: always
     networks:
@@ -55,6 +56,7 @@ services:
       JWT_SECRET: ${JWT_SECRET}
       VIRTUAL_HOST: api-nba-scoreboard.duckdns.org
       LETSENCRYPT_HOST: api-nba-scoreboard.duckdns.org
+      LETSENCRYPT_TEST: "true"
       LETSENCRYPT_EMAIL: laferre.estiven@gmail.com
     # ports:
       # - "5000:5000"
