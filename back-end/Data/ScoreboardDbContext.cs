@@ -69,7 +69,7 @@ public class ScoreboardDbContext(DbContextOptions<ScoreboardDbContext> options) 
         // admin user
         var adminUser = new User
         {
-            Id = 1,
+            Id = 1234,
             Email = "admin@gmail.com",
             PasswordHash = "admin" // cambiar en producción
         };
