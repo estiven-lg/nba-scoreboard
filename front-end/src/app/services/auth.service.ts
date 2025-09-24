@@ -9,12 +9,13 @@ import {
   RegisterResponse, 
   User 
 } from '../models';
+import { environment } from 'environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  private baseUrl = 'http://localhost:5204/api/auth';
+  private baseUrl = `${environment.apiUrl}/api/auth`;
   private currentUserSubject: BehaviorSubject<User | null>;
   public currentUser: Observable<User | null>;
 
