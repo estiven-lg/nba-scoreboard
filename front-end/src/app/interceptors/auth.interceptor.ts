@@ -1,12 +1,11 @@
 import { HttpInterceptorFn } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { AuthService } from '@services/auth.service';
+import { catchError } from 'rxjs';
 
 export const AuthInterceptor: HttpInterceptorFn = (req, next) => {
   const authService = inject(AuthService);
   const token = authService.getToken();
-
-  console.log('AuthInterceptor - Token obtenido:', token);
 
   if (token) {
     req = req.clone({
@@ -16,5 +15,14 @@ export const AuthInterceptor: HttpInterceptorFn = (req, next) => {
     });
   }
 
-  return next(req);
+  return next(req).pipe(
+    catchError((error) => {
+      if (error.status === 401) {
+        // Manejar error 401 (no autorizado) revocando el token y redirigiendo al login
+        authService.logout();
+        window.location.href = '/login';
+      }
+      throw error;
+    })
+  );
 };
