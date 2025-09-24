@@ -33,15 +33,13 @@ services:
       context: ./front-end
       dockerfile: Dockerfile
     container_name: frontend
-    # ports:
-      # - "${front_port}:80"
     depends_on:
       - backend
     environment:
-      - VIRTUAL_HOST=nba-scoreboard.duckdns.org
-      - LETSENCRYPT_HOST=nba-scoreboard.duckdns.org
-      - LETSENCRYPT_EMAIL=laferre.estiven@gmail.com
-      - HTTPS_METHOD=redirect
+      VIRTUAL_HOST: nba-scoreboard.duckdns.org
+      LETSENCRYPT_HOST: nba-scoreboard.duckdns.org
+      LETSENCRYPT_EMAIL: laferre.estiven@gmail.com
+      HTTPS_METHOD: redirect
     restart: always
     networks:
       - nba-vps
@@ -54,6 +52,9 @@ services:
     env_file: .env
     environment:
       CONNECTION_STRING: "Server=db;Database=${MSSQL_DB};User Id=sa;Password=${MSSQL_SA_PASSWORD};TrustServerCertificate=True;"
+      VIRTUAL_HOST: api-nba-scoreboard.duckdns.org
+      LETSENCRYPT_HOST: api-nba-scoreboard.duckdns.org
+      LETSENCRYPT_EMAIL: laferre.estiven@gmail.com
     ports:
       - "5000:5000"
     depends_on:
