@@ -55,8 +55,8 @@ services:
       VIRTUAL_HOST: api-nba-scoreboard.duckdns.org
       LETSENCRYPT_HOST: api-nba-scoreboard.duckdns.org
       LETSENCRYPT_EMAIL: laferre.estiven@gmail.com
-    ports:
-      - "5000:5000"
+    # ports:
+    #   - "5000:5000"
     depends_on:
       - db
     networks:
