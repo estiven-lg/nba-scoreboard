@@ -1,5 +1,5 @@
 // environment.prod.ts
 export const environment = {
   production: true,
-  apiUrl: "https://api-nba-scoreboard.duckdns.org/"
+  apiUrl: "https://api-nba-scoreboard.duckdns.org"
 };
