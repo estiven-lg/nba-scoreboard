@@ -39,7 +39,7 @@ services:
       VIRTUAL_HOST: nba2-scoreboard.duckdns.org
       LETSENCRYPT_HOST: nba2-scoreboard.duckdns.org
       LETSENCRYPT_EMAIL: laferre.estiven@gmail.com
-      LETSENCRYPT_TEST: "true"
+      # LETSENCRYPT_TEST: "true"
       HTTPS_METHOD: redirect
     restart: always
     networks:
