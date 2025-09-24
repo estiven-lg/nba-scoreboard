@@ -65,5 +65,14 @@ public class ScoreboardDbContext(DbContextOptions<ScoreboardDbContext> options) 
             .WithOne(p => p.Team)
             .HasForeignKey(p => p.TeamId)
             .OnDelete(DeleteBehavior.Cascade);
+
+        // admin user
+        var adminUser = new User
+        {
+            Id = 1,
+            Email = "admin@gmail.com",
+            PasswordHash = "admin" // cambiar en producción
+        };
+        modelBuilder.Entity<User>().HasData(adminUser);
     }
 }
