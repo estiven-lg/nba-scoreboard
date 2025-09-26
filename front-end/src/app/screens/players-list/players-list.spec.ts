@@ -1,23 +1,21 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { PlayersListComponent } from './players-list';
 
-import { PlayersList } from './players-list';
-
-describe('PlayersList', () => {
-  let component: PlayersList;
-  let fixture: ComponentFixture<PlayersList>;
+describe('PlayersListComponent', () => {
+  let component: PlayersListComponent;
+  let fixture: ComponentFixture<PlayersListComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [PlayersList]
-    })
-    .compileComponents();
+      imports: [PlayersListComponent],
+    }).compileComponents();
 
-    fixture = TestBed.createComponent(PlayersList);
+    fixture = TestBed.createComponent(PlayersListComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it('should create the component', () => {
     expect(component).toBeTruthy();
   });
 });
