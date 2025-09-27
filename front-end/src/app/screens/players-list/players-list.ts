@@ -1,8 +1,9 @@
 import { ChangeDetectionStrategy, Component, OnInit, signal } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
 import { Api } from '@api/api';
-import { Player, PlayerWriteDto } from '@services/players.service';
 import { PlayerDetailsModalComponent, PlayerEditModalComponent, PlayerDeleteModalComponent, PlayerCreateModalComponent, PlayerSaveConfirmModalComponent } from './components';
+import { PlayerWriteDto } from '@models/PlayerWriteDto';
+import { Player } from '@models/Player';
 
 @Component({
   selector: 'app-players-list',

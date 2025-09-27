@@ -1,6 +1,6 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Player } from '@services/players.service';
+import { Player } from '@models/Player';
 
 @Component({
   selector: 'app-player-details-modal',

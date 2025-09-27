@@ -1,7 +1,7 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, NgForm } from '@angular/forms';
-import { Player } from '@services/players.service';
+import { Player } from '@models/Player';
 
 @Component({
   selector: 'app-player-edit-modal',
