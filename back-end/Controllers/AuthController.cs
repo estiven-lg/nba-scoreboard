@@ -38,7 +38,7 @@ public class AuthController : ControllerBase
         }
         catch (Exception ex)
         {
-            return Unauthorized(new { message = ex.Message });
+            return Unauthorized(new { message = "usuario o contraseña incorrectos" });
         }
     }
 }

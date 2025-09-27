@@ -17,7 +17,7 @@ export const AuthInterceptor: HttpInterceptorFn = (req, next) => {
 
   return next(req).pipe(
     catchError((error) => {
-      if (error.status === 401) {
+      if (error.status === 401 && !req.url.includes('/login')) {
         // Manejar error 401 (no autorizado) revocando el token y redirigiendo al login
         authService.logout();
         window.location.href = '/login';

@@ -1,5 +1,6 @@
 ﻿using GameDataService.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
 
 namespace GameDataService.Data;
 
@@ -66,13 +67,5 @@ public class ScoreboardDbContext(DbContextOptions<ScoreboardDbContext> options) 
             .HasForeignKey(p => p.TeamId)
             .OnDelete(DeleteBehavior.Cascade);
 
-        // admin user
-        var adminUser = new User
-        {
-            Id = 1234,
-            Email = "admin@gmail.com",
-            PasswordHash = "admin" // cambiar en producción
-        };
-        modelBuilder.Entity<User>().HasData(adminUser);
     }
 }

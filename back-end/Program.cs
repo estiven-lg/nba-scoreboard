@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using Microsoft.AspNetCore.Identity;
 
 // using GameDataService.Services;
 
@@ -102,6 +103,19 @@ using (var scope = app.Services.CreateScope())
             new Team { Name = "Home", City = "Azul" },
             new Team { Name = "Visitor", City = "Rojo" }
         );
+        db.SaveChanges();
+    }
+
+    if (!db.Users.Any(u => u.Email == "admin@gmail.com"))
+    {
+        var hasher = new PasswordHasher<User>();
+        var adminUser = new User
+        {
+            Email = "admin@gmail.com"
+        };
+        adminUser.PasswordHash = hasher.HashPassword(adminUser, "admin123");
+
+        db.Users.Add(adminUser);
         db.SaveChanges();
     }
 }

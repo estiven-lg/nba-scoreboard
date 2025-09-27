@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace GameDataService.Controllers;
 
-[Authorize]
 [ApiController]
 [Route("api/[controller]")]
 public class GamesController : ControllerBase
@@ -18,6 +17,7 @@ public class GamesController : ControllerBase
         _gameService = gameService;
     }
 
+    [Authorize]
     [HttpPost]
     public async Task<ActionResult<GameReadDto>> Create([FromBody] GameWriteDto dto)
     {
@@ -45,6 +45,7 @@ public class GamesController : ControllerBase
         (await _gameService.GetGame(id)) is { } g ? Ok(MapToReadDto(g)) : NotFound();
 
     // Puntuación
+    [Authorize]
     [HttpPost("{id:int}/score/home")]
     public async Task<ActionResult<GameReadDto>> HomePoints(int id, [FromBody] PointsDto dto)
     {
@@ -52,6 +53,7 @@ public class GamesController : ControllerBase
         return Ok(MapToReadDto(game));
     }
 
+    [Authorize]
     [HttpPost("{id:int}/score/visitor")]
     public async Task<ActionResult<GameReadDto>> VisitorPoints(int id, [FromBody] PointsDto dto)
     {
@@ -59,6 +61,7 @@ public class GamesController : ControllerBase
         return Ok(MapToReadDto(game));
     }
 
+    [Authorize]
     [HttpPost("{id:int}/score/home/decrement")]
     public async Task<ActionResult<GameReadDto>> HomeMinus(int id)
     {
@@ -66,6 +69,7 @@ public class GamesController : ControllerBase
         return Ok(MapToReadDto(game));
     }
 
+    [Authorize]
     [HttpPost("{id:int}/score/visitor/decrement")]
     public async Task<ActionResult<GameReadDto>> VisitorMinus(int id)
     {
@@ -74,6 +78,7 @@ public class GamesController : ControllerBase
     }
 
     // Tiempo
+    [Authorize]
     [HttpPost("{id:int}/start")]
     public async Task<ActionResult<GameReadDto>> Start(int id, [FromBody] TimeDto dto)
     {
@@ -81,6 +86,7 @@ public class GamesController : ControllerBase
         return Ok(MapToReadDto(game));
     }
 
+    [Authorize]
     [HttpPost("{id:int}/pause")]
     public async Task<ActionResult<GameReadDto>> Pause(int id)
     {
@@ -88,6 +94,7 @@ public class GamesController : ControllerBase
         return Ok(MapToReadDto(game));
     }
 
+    [Authorize]
     [HttpPost("{id:int}/resume")]
     public async Task<ActionResult<GameReadDto>> Resume(int id)
     {
@@ -103,6 +110,7 @@ public class GamesController : ControllerBase
     }
 
     // Cuartos
+    [Authorize]
     [HttpPost("{id:int}/next-period")]
     public async Task<ActionResult<GameReadDto>> NextPeriod(int id)
     {
@@ -110,6 +118,7 @@ public class GamesController : ControllerBase
         return Ok(MapToReadDto(game));
     }
 
+    [Authorize]
     [HttpPost("{id:int}/previous-period")]
     public async Task<ActionResult<GameReadDto>> PreviousPeriod(int id)
     {
@@ -118,6 +127,7 @@ public class GamesController : ControllerBase
     }
 
     // General
+    [Authorize]
     [HttpPost("{id:int}/reset-game")]
     public async Task<ActionResult<GameReadDto>> ResetGame(int id)
     {
@@ -125,6 +135,7 @@ public class GamesController : ControllerBase
         return Ok(MapToReadDto(game));
     }
 
+    [Authorize]
     [HttpPost("{id:int}/suspend")]
     public async Task<ActionResult<GameReadDto>> Suspend(int id)
     {
@@ -132,6 +143,7 @@ public class GamesController : ControllerBase
         return Ok(MapToReadDto(game));
     }
 
+    [Authorize]
     [HttpPost("{id:int}/finish")]
     public async Task<ActionResult<GameReadDto>> Finish(int id)
     {
@@ -140,6 +152,7 @@ public class GamesController : ControllerBase
     }
 
     // "Guardar": los cambios ya se guardan en cada acción; este endpoint es opcional/no-op.
+    [Authorize]
     [HttpPost("{id:int}/save")]
     public async Task<ActionResult<GameReadDto>> Save(int id) =>
         (await _gameService.GetGame(id)) is { } g ? Ok(MapToReadDto(g)) : NotFound();

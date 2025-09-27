@@ -1,0 +1,52 @@
+services:
+      
+  frontend:
+    build:
+     context: ./front-end
+     dockerfile: Dockerfile
+    container_name: frontend
+    ports:
+     - "${front_port}:80"
+    depends_on:
+     - backend
+    networks:
+      - nba-vps
+      
+  backend:
+    build:
+      context: ./back-end
+      dockerfile: Dockerfile
+    container_name: backend
+    env_file: .env
+    environment:
+      CONNECTION_STRING: "Server=db;Database=${MSSQL_DB};User Id=sa;Password=${MSSQL_SA_PASSWORD};TrustServerCertificate=True;"
+      JWT_SECRET: ${JWT_SECRET}
+    ports:
+      - "5000:5000"
+    depends_on:
+      - db
+    networks:
+      - nba-vps
+
+  db:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: db
+    env_file: .env
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=${MSSQL_SA_PASSWORD}
+      - MSSQL_TCP_PORT=1433
+
+    ports:
+      - "1434:1433"
+    volumes:
+      - sql_data:/var/opt/mssql
+    networks:
+      - nba-vps
+
+volumes:
+  sql_data:
+
+networks:
+  nba-vps:
+    driver: bridge

@@ -26,7 +26,10 @@ export class Login {
     });
   }
 
-  onSubmit() {
+  onSubmit(event: Event) {
+    event.preventDefault(); 
+
+    console.log(this.loginForm.value);
     if (this.loginForm.invalid) {
       return;
     }
@@ -39,7 +42,7 @@ export class Login {
     this.authService.login(email, password).subscribe({
       next: (response: any) => {
         console.log('Login exitoso:', response);
-        this.router.navigate(['/']); // Redirigir a la página principal
+        this.router.navigate(['/games']); // Redirigir a la página principal
       },
       error: (error: any) => {
         console.error('Error en login:', error);
