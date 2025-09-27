@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { Api } from '@api/api';
 import { CommonModule, DatePipe } from '@angular/common';
+import { Game } from '@models/index';
 
 @Component({
   selector: 'app-game-list',
@@ -28,8 +29,7 @@ export class GameList {
   }
 
   ngOnInit(): void {
-    this.api.game.getDatos().subscribe((games:any) => {
-      console.log(games);
+    this.api.game.getGames().then((games: Game[]) => {
       this.games = games;
     });
   }

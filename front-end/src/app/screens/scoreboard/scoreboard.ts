@@ -34,7 +34,7 @@ export class Scoreboard implements OnInit, OnDestroy {
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
     if (id) {
-      this.api.game.getGameById(id).subscribe((data: any) => {
+      this.api.game.getGameById(id).then((data: any) => {
         this.homeScore = data.homeScore;
         this.awayScore = data.awayScore;
         this.period = data.currentPeriod;

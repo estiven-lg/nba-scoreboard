@@ -1,7 +1,9 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { firstValueFrom, Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
+import { Player } from '@models/Player';
+import { PlayerWriteDto } from '@models/PlayerWriteDto';
 
 @Injectable({
   providedIn: 'root'
@@ -14,24 +16,20 @@ export class PlayerService {
   // ====================
   // ⛹️‍♂️ Player Management
   // ====================
-  getPlayers(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.baseUrl}`);
+  getPlayers(): Promise<Player[]> {
+    return firstValueFrom(this.http.get<Player[]>(this.baseUrl));
   }
 
-  createPlayer(player: any): Observable<any> {
-    return this.http.post(`${this.baseUrl}`, player);
+  updatePlayer(id: number, player: PlayerWriteDto): Promise<void> {
+    return firstValueFrom(this.http.put<void>(`${this.baseUrl}/${id}`, player));
   }
 
-  getPlayerById(id: string | number): Observable<any> {
-    return this.http.get(`${this.baseUrl}/${id}`);
+  deletePlayer(id: number): Promise<void> {
+    return firstValueFrom(this.http.delete<void>(`${this.baseUrl}/${id}`));
   }
 
-  updatePlayer(id: string | number, player: any): Observable<any> {
-    return this.http.put(`${this.baseUrl}/${id}`, player);
-  }
-
-  deletePlayer(id: string | number): Observable<any> {
-    return this.http.delete(`${this.baseUrl}/${id}`);
+  createPlayer(player: PlayerWriteDto): Promise<void> {
+    return firstValueFrom(this.http.post<void>(this.baseUrl, player));
   }
 
   trackByPlayerId(index: number, player: any) {

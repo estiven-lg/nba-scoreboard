@@ -1,7 +1,9 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { firstValueFrom, Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
+import { Game } from '@models/Game';
+import { GameWriteDto } from '@models/GameWriteDto';
 
 @Injectable({
   providedIn: 'root'
@@ -14,69 +16,73 @@ export class GameService {
   // ====================
   // 🎮 Game CRUD
   // ====================
-  getDatos(): Observable<any> {
-    return this.http.get(`${this.baseUrl}`);
+  getGames(): Promise<Game[]> {
+    return firstValueFrom(this.http.get<Game[]>(this.baseUrl));
   }
 
-  getGameById(id: string): Observable<any> {
-    return this.http.get(`${this.baseUrl}/${id}`);
+  getGameById(id: string): Promise<Game> {
+    return firstValueFrom(this.http.get<Game>(`${this.baseUrl}/${id}`));
   }
 
-  createGame(payload: any): Observable<any> {
-    return this.http.post(`${this.baseUrl}`, payload);
+  createGame(payload: GameWriteDto): Promise<Game> {
+    return firstValueFrom(this.http.post<Game>(this.baseUrl, payload));
   }
 
-  loadGameById(gameId: number): Observable<any> {
-    return this.http.get(`${this.baseUrl}/${gameId}`);
+  loadGameById(gameId: number): Promise<Game> {
+    return firstValueFrom(this.http.get<Game>(`${this.baseUrl}/${gameId}`));
   }
 
-  getGameState(gameId: string | number): Observable<any> {
-    return this.http.get(`${this.baseUrl}/${gameId}`);
+  getGameState(gameId: string | number): Promise<Game> {
+    return firstValueFrom(this.http.get<Game>(`${this.baseUrl}/${gameId}`));
   }
 
-  getFinalState(gameId: string | number): Observable<any> {
-    return this.http.get(`${this.baseUrl}/${gameId}`);
+  getFinalState(gameId: string | number): Promise<Game> {
+    return firstValueFrom(this.http.get<Game>(`${this.baseUrl}/${gameId}`));
   }
 
   // ====================
   // 🏆 Game Flow Control
   // ====================
-  startGame(gameId: string | number, periodSeconds: number): Observable<any> {
-    return this.http.post(`${this.baseUrl}/${gameId}/start`, { periodSeconds });
+  startGame(gameId: string | number, periodSeconds: number): Promise<any> {
+    return firstValueFrom(this.http.post(`${this.baseUrl}/${gameId}/start`, { periodSeconds }));
   }
 
-  pauseGame(gameId: string | number): Observable<any> {
-    return this.http.post(`${this.baseUrl}/${gameId}/pause`, {});
+  pauseGame(gameId: string | number): Promise<any> {
+    return firstValueFrom(this.http.post(`${this.baseUrl}/${gameId}/pause`, {}));
   }
 
-  resumeGame(gameId: string | number): Observable<any> {
-    return this.http.post(`${this.baseUrl}/${gameId}/resume`, {});
+  resumeGame(gameId: string | number): Promise<any> {
+    return firstValueFrom(this.http.post(`${this.baseUrl}/${gameId}/resume`, {}));
   }
 
-  resetPeriod(gameId: string | number, periodSeconds: number): Observable<any> {
-    return this.http.post(`${this.baseUrl}/${gameId}/reset-period`, { periodSeconds });
+  resetPeriod(gameId: string | number, periodSeconds: number): Promise<any> {
+    return firstValueFrom(this.http.post(`${this.baseUrl}/${gameId}/reset-period`, { periodSeconds }));
   }
 
-  nextPeriod(gameId: string | number): Observable<any> {
-    return this.http.post(`${this.baseUrl}/${gameId}/next-period`, {});
+  nextPeriod(gameId: string | number): Promise<any> {
+    return firstValueFrom(this.http.post(`${this.baseUrl}/${gameId}/next-period`, {}));
   }
 
-  suspendGame(gameId: string | number): Observable<any> {
-    return this.http.post(`${this.baseUrl}/${gameId}/suspend`, {});
+  suspendGame(gameId: string | number): Promise<any> {
+    return firstValueFrom(this.http.post(`${this.baseUrl}/${gameId}/suspend`, {}));
   }
 
-  saveGame(gameId: string | number): Observable<any> {
-    return this.http.post(`${this.baseUrl}/${gameId}/save`, {});
+  saveGame(gameId: string | number): Promise<any> {
+    return firstValueFrom(this.http.post(`${this.baseUrl}/${gameId}/save`, {}));
   }
 
-  finishGame(gameId: string | number): Observable<any> {
-    return this.http.post(`${this.baseUrl}/${gameId}/finish`, {});
+  finishGame(gameId: string | number): Promise<any> {
+    return firstValueFrom(this.http.post(`${this.baseUrl}/${gameId}/finish`, {}));
   }
 
   // ====================
   // ⛹️‍♂️ Scores
   // ====================
-  addPoints(gameId: string | number, team: 'home' | 'visitor', points: number): Observable<any> {
-    return this.http.post(`${this.baseUrl}/${gameId}/score/${team}`, { points });
+  addPoints(gameId: string | number, team: 'home' | 'visitor', points: number): Promise<any> {
+    return firstValueFrom(this.http.post(`${this.baseUrl}/${gameId}/score/${team}`, { points }));
+  }
+
+  trackByGameId(index: number, game: any) {
+    return game.gameId;
   }
 }

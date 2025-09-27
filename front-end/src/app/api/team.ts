@@ -1,7 +1,9 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { firstValueFrom, Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
+import { Team } from '@models/Team';
+import { TeamWriteDto } from '@models/TeamWriteDto';
 
 @Injectable({
   providedIn: 'root'
@@ -14,24 +16,28 @@ export class TeamService {
   // ====================
   // 🏀 Team Management
   // ====================
-  getTeams(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.baseUrl}`);
+  getTeams(): Promise<Team[]> {
+    return firstValueFrom(this.http.get<Team[]>(this.baseUrl));
   }
 
-  createTeam(team: any): Observable<any> {
+  getTeamById(id: string | number): Promise<Team> {
+    return firstValueFrom(this.http.get<Team>(`${this.baseUrl}/${id}`));
+  }
+
+  createTeam(team: TeamWriteDto): Promise<Team> {
     console.log(team);
-    return this.http.post(`${this.baseUrl}`, team);
+    return firstValueFrom(this.http.post<Team>(this.baseUrl, team));
   }
 
-  getTeamById(id: string | number): Observable<any> {
-    return this.http.get(`${this.baseUrl}/${id}`);
+  updateTeam(id: string | number, team: TeamWriteDto): Promise<Team> {
+    return firstValueFrom(this.http.put<Team>(`${this.baseUrl}/${id}`, team));
   }
 
-  updateTeam(id: string | number, team: any): Observable<any> {
-    return this.http.put(`${this.baseUrl}/${id}`, team);
+  deleteTeam(id: string | number): Promise<void> {
+    return firstValueFrom(this.http.delete<void>(`${this.baseUrl}/${id}`));
   }
 
-  deleteTeam(id: string | number): Observable<any> {
-    return this.http.delete(`${this.baseUrl}/${id}`);
+  trackByTeamId(index: number, team: any) {
+    return team.teamId;
   }
 }

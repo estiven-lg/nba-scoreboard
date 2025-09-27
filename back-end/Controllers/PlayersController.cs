@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace GameDataService.Controllers;
 
-[Authorize]
 [ApiController]
 [Route("api/[controller]")]
 public class PlayersController : ControllerBase
@@ -60,6 +59,7 @@ public class PlayersController : ControllerBase
 
 
     [HttpPost]
+    [Authorize]
     public async Task<ActionResult<PlayerReadDto>> CreatePlayer(PlayerWriteDto dto)
     {
         var player = new Player
@@ -89,6 +89,7 @@ public class PlayersController : ControllerBase
 
 
     [HttpPut("{id}")]
+    [Authorize]
     public async Task<ActionResult<PlayerReadDto>> UpdatePlayer(int id, PlayerWriteDto dto)
     {
         var player = new Player
@@ -120,6 +121,7 @@ public class PlayersController : ControllerBase
     }
 
     [HttpDelete("{id}")]
+    [Authorize]
     public async Task<ActionResult> DeletePlayer(int id)
     {
         var result = await _playerService.DeleteAsync(id);

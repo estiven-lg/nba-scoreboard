@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace GameDataService.Controllers;
 
-[Authorize]
 [ApiController]
 [Route("api/[controller]")]
 public class PlayerFoulsController : ControllerBase
@@ -36,6 +35,7 @@ public class PlayerFoulsController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize]
     public async Task<ActionResult<PlayerFoul>> CreatePlayerFoul(PlayerFoul playerFoul)
     {
         var createdPlayerFoul = await _playerFoulService.AddAsync(playerFoul);
@@ -47,6 +47,7 @@ public class PlayerFoulsController : ControllerBase
     }
 
     [HttpPut("{id}")]
+    [Authorize]
     public async Task<ActionResult<PlayerFoul>> UpdatePlayerFoul(int id, PlayerFoul playerFoul)
     {
         if (id != playerFoul.PlayerFoulId)
@@ -64,6 +65,7 @@ public class PlayerFoulsController : ControllerBase
     }
 
     [HttpDelete("{id}")]
+    [Authorize]
     public async Task<ActionResult> DeletePlayerFoul(int id)
     {
         var result = await _playerFoulService.DeleteAsync(id);
@@ -76,6 +78,7 @@ public class PlayerFoulsController : ControllerBase
     }
 
     [HttpPost("{id}/increase")]
+    [Authorize]
     public async Task<ActionResult<PlayerFoul>> IncreasePlayerFouls(int id)
     {
         try
@@ -94,6 +97,7 @@ public class PlayerFoulsController : ControllerBase
     }
 
     [HttpPost("{id}/decrease")]
+    [Authorize]
     public async Task<ActionResult<PlayerFoul>> DecreasePlayerFouls(int id)
     {
         try

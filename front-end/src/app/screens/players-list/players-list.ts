@@ -1,11 +1,13 @@
 import { ChangeDetectionStrategy, Component, OnInit, signal } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
-import { PlayersService, Player, PlayerWriteDto } from '@services/players.service';
+import { Api } from '@api/api';
+import { Player, PlayerWriteDto } from '@services/players.service';
+import { PlayerDetailsModalComponent, PlayerEditModalComponent, PlayerDeleteModalComponent, PlayerCreateModalComponent, PlayerSaveConfirmModalComponent } from './components';
 
 @Component({
   selector: 'app-players-list',
   standalone: true,
-  imports: [FormsModule],
+  imports: [FormsModule, PlayerDetailsModalComponent, PlayerEditModalComponent, PlayerDeleteModalComponent, PlayerCreateModalComponent, PlayerSaveConfirmModalComponent],
   templateUrl: './players-list.html',
   styleUrls: ['./players-list.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -25,7 +27,7 @@ export class PlayersListComponent implements OnInit {
   selectedPlayer = signal<Player | null>(null);
   tempEditedPlayer = signal<Player | null>(null);
 
-  constructor(private playersService: PlayersService) {}
+  constructor(private api: Api ) {}
 
   ngOnInit() {
     this.loadPlayers();
@@ -35,7 +37,7 @@ export class PlayersListComponent implements OnInit {
     this.isLoading.set(true);
     this.error.set(null);
     try {
-      this.players.set(await this.playersService.getPlayers());
+      this.players.set(await this.api.player.getPlayers());
     } catch (e: any) {
       this.error.set(e.message);
     } finally {
@@ -48,7 +50,7 @@ async onConfirmSave() {
     try {
       const updatedDto = this.mapToWriteDto(this.tempEditedPlayer()!);
 
-      await this.playersService.updatePlayer(
+      await this.api.player.updatePlayer(
         this.selectedPlayer()!.playerId,
         updatedDto
       );
@@ -81,7 +83,7 @@ cancelSaveConfirm() {
 async onConfirmDelete() {
   if (this.selectedPlayer()) {
     try {
-      await this.playersService.deletePlayer(this.selectedPlayer()!.playerId);
+      await this.api.player.deletePlayer(this.selectedPlayer()!.playerId);
 
       this.showDeleteModal.set(false);
       this.showDetailsModal.set(false);
@@ -99,7 +101,7 @@ async onConfirmDelete() {
   async onCreatePlayer(form: NgForm) {
     if (form.valid) {
       try {
-        await this.playersService.createPlayer(form.value as PlayerWriteDto);
+        await this.api.player.createPlayer(form.value as PlayerWriteDto);
         this.closeModals();
         this.loadPlayers();
       } catch (e: any) {

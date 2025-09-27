@@ -1,0 +1,35 @@
+<!-- Modal de Detalles -->
+@if (show && player) {
+<div
+  class="fixed inset-0 bg-gray-900 bg-opacity-75 overflow-y-auto h-full w-full flex items-center justify-center z-50 p-4">
+  <div class="relative bg-gray-800 rounded-lg shadow-xl w-full max-w-md p-6 sm:p-8 border border-gray-700">
+    <div class="flex justify-between items-center pb-3 border-b border-gray-600">
+      <h3 class="text-2xl font-bold text-white">Detalles del Jugador</h3>
+      <button (click)="onClose()" class="text-gray-400 hover:text-white transition-colors duration-200">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
+    <div class="mt-4 text-gray-300 space-y-2">
+      <div><span class="font-semibold text-white">Nombre Completo:</span> {{ player.fullName }}</div>
+      <div><span class="font-semibold text-white">Número de Camiseta:</span> {{ player.jerseyNumber }}</div>
+      <div><span class="font-semibold text-white">Posición:</span> {{ player.position }}</div>
+      <div><span class="font-semibold text-white">Nacionalidad:</span> {{ player.nationality }}</div>
+      <div><span class="font-semibold text-white">Edad:</span> {{ player.age }} años</div>
+      <div><span class="font-semibold text-white">Altura:</span> {{ player.height }} cm</div>
+      <div><span class="font-semibold text-white">Equipo ID:</span> {{ player.teamId }}</div>
+    </div>
+    <div class="mt-6 flex justify-end space-x-4">
+      <button (click)="onEdit()"
+        class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition duration-200">
+        Editar
+      </button>
+      <button (click)="onDelete()"
+        class="bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-4 rounded-lg transition duration-200">
+        Eliminar
+      </button>
+    </div>
+  </div>
+</div>
+}
