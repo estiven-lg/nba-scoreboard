@@ -29,27 +29,14 @@ services:
       - nba-vps
       
   frontend:
-  # Production build
-    #build:
-    #  context: ./front-end
-    #  dockerfile: Dockerfile
-    #container_name: frontend
-    #ports:
-    #  - "${front_port}:80"
-    #depends_on:
-    #  - backend
-  # Development build
-    image: node:22-alpine
+    build:
+     context: ./front-end
+     dockerfile: Dockerfile
     container_name: frontend
+    ports:
+     - "${front_port}:80"
     depends_on:
-      - backend
-    environment:
-      VIRTUAL_HOST: nba2-scoreboard.duckdns.org
-      LETSENCRYPT_HOST: nba2-scoreboard.duckdns.org
-      LETSENCRYPT_EMAIL: laferre.estiven@gmail.com
-      # LETSENCRYPT_TEST: "true"
-      HTTPS_METHOD: redirect
-    restart: always
+     - backend
     networks:
       - nba-vps
       

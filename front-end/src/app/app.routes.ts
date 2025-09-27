@@ -3,8 +3,6 @@ import { Scoreboard } from '@screens/scoreboard/scoreboard';
 import { ControlPanelComponent } from '@screens/control-panel/control-panel.component';
 import { GameList } from '@screens/game-list/game-list';
 import { PlayersListComponent } from '@screens/players-list/players-list';
-
-import { PlayersList } from '@screens/players-list/players-list';
 import { AuthGuard } from './guards/auth.guard';
 import { Login } from '@screens/login/login';
 
