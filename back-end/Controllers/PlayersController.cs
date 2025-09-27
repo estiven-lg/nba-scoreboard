@@ -22,102 +22,37 @@ public class PlayersController : ControllerBase
     public async Task<ActionResult<IEnumerable<PlayerReadDto>>> GetAllPlayers()
     {
         var players = await _playerService.GetAllAsync();
-        var dtos = players.Select(p => new PlayerReadDto
-        {
-            PlayerId = p.PlayerId,
-            FullName = p.FullName,
-            JerseyNumber = p.JerseyNumber,
-            Position = p.Position ?? "",
-            TeamId = p.TeamId,
-            Height = p.Height,
-            Age = p.Age,
-            Nationality = p.Nationality ?? ""
-        });
-        return Ok(dtos);
+        return Ok(players);
     }
-
 
     [HttpGet("{id}")]
     public async Task<ActionResult<PlayerReadDto>> GetPlayerById(int id)
     {
-        var p = await _playerService.GetByIdAsync(id);
-        if (p == null)
+        var player = await _playerService.GetByIdAsync(id);
+        if (player == null)
             return NotFound();
-        var dto = new PlayerReadDto
-        {
-            PlayerId = p.PlayerId,
-            FullName = p.FullName,
-            JerseyNumber = p.JerseyNumber,
-            Position = p.Position ?? "",
-            TeamId = p.TeamId,
-            Height = p.Height,
-            Age = p.Age,
-            Nationality = p.Nationality ?? ""
-        };
-        return Ok(dto);
+        
+        return Ok(player);
     }
 
 
     [HttpPost]
     [Authorize]
-    public async Task<ActionResult<PlayerReadDto>> CreatePlayer(PlayerWriteDto dto)
+    public async Task<ActionResult<PlayerReadDto>> CreatePlayer(PlayerWriteDto playerDto)
     {
-        var player = new Player
-        {
-            FullName = dto.FullName,
-            JerseyNumber = dto.JerseyNumber,
-            Position = dto.Position,
-            TeamId = dto.TeamId,
-            Height = dto.Height,
-            Age = dto.Age,
-            Nationality = dto.Nationality
-        };
-        var createdPlayer = await _playerService.AddAsync(player);
-        var readDto = new PlayerReadDto
-        {
-            PlayerId = createdPlayer.PlayerId,
-            FullName = dto.FullName,
-            JerseyNumber = createdPlayer.JerseyNumber,
-            Position = createdPlayer.Position ?? "",
-            TeamId = createdPlayer.TeamId,
-            Height = createdPlayer.Height,
-            Age = createdPlayer.Age,
-            Nationality = createdPlayer.Nationality ?? ""
-        };
-        return CreatedAtAction(nameof(GetPlayerById), new { id = readDto.PlayerId }, readDto);
+        var createdPlayer = await _playerService.AddAsync(playerDto);
+        return CreatedAtAction(nameof(GetPlayerById), new { id = createdPlayer.PlayerId }, createdPlayer);
     }
-
 
     [HttpPut("{id}")]
     [Authorize]
-    public async Task<ActionResult<PlayerReadDto>> UpdatePlayer(int id, PlayerWriteDto dto)
+    public async Task<ActionResult<PlayerReadDto>> UpdatePlayer(int id, PlayerWriteDto playerDto)
     {
-        var player = new Player
-        {
-            PlayerId = id,
-            FullName = dto.FullName,
-            JerseyNumber = dto.JerseyNumber,
-            Position = dto.Position,
-            TeamId = dto.TeamId,
-            Height = dto.Height,
-            Age = dto.Age,
-            Nationality = dto.Nationality
-        };
-        var updatedPlayer = await _playerService.UpdateAsync(player);
+        var updatedPlayer = await _playerService.UpdateAsync(id, playerDto);
         if (updatedPlayer == null)
             return NotFound();
-        var readDto = new PlayerReadDto
-        {
-            PlayerId = updatedPlayer.PlayerId,
-            FullName = dto.FullName,
-            JerseyNumber = updatedPlayer.JerseyNumber,
-            Position = updatedPlayer.Position ?? "",
-            TeamId = updatedPlayer.TeamId,
-            Height = updatedPlayer.Height,
-            Age = updatedPlayer.Age,
-            Nationality = updatedPlayer.Nationality ?? ""
-        };
-        return Ok(readDto);
+        
+        return Ok(updatedPlayer);
     }
 
     [HttpDelete("{id}")]

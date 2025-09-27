@@ -45,9 +45,14 @@
           class="mt-1 block w-full rounded-md bg-gray-700 border-gray-600 text-white placeholder-gray-400 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-2 border">
       </div>
       <div>
-        <label for="newTeamId" class="block text-sm font-medium text-gray-300">ID del Equipo</label>
-        <input type="number" id="newTeamId" name="teamId" ngModel required
-          class="mt-1 block w-full rounded-md bg-gray-700 border-gray-600 text-white placeholder-gray-400 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-2 border">
+        <label for="newTeamId" class="block text-sm font-medium text-gray-300">Equipo</label>
+        <select id="newTeamId" name="teamId" ngModel required
+          class="mt-1 block w-full rounded-md bg-gray-700 border-gray-600 text-white shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-2 border">
+          <option value="" class="bg-gray-700 text-white">Seleccionar equipo...</option>
+          @for (team of teams; track team.teamId) {
+          <option [value]="team.teamId" class="bg-gray-700 text-white">{{ team.name }} ({{ team.city }})</option>
+          }
+        </select>
       </div>
     </div>
     <div class="mt-6 flex justify-end space-x-4">

@@ -16,14 +16,12 @@ public class TeamRepository : ITeamRepository
 
     public async Task<IEnumerable<Team>> GetAll()
     {
-        return await _context.Teams.Include(t => t.Players).ToListAsync();
+        return await _context.Teams.ToListAsync();
     }
 
     public async Task<Team?> GetById(int id)
     {
-        return await _context
-            .Teams.Include(t => t.Players)
-            .FirstOrDefaultAsync(t => t.TeamId == id);
+        return await _context.Teams.FirstOrDefaultAsync(t => t.TeamId == id);
     }
 
     public async Task<Team> Add(Team team)

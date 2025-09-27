@@ -1,12 +1,13 @@
 using GameDataService.Models;
+using GameDataService.Models.DTOs;
 
 namespace GameDataService.Services.interfaces;
 
 public interface IPlayerService
 {
-    Task<IEnumerable<Player>> GetAllAsync();
-    Task<Player?> GetByIdAsync(int id);
-    Task<Player> AddAsync(Player player);
-    Task<Player?> UpdateAsync(Player player);
+    Task<IEnumerable<PlayerReadDto>> GetAllAsync();
+    Task<PlayerReadDto?> GetByIdAsync(int id);
+    Task<PlayerReadDto> AddAsync(PlayerWriteDto playerDto);
+    Task<PlayerReadDto?> UpdateAsync(int id, PlayerWriteDto playerDto);
     Task<bool> DeleteAsync(int id);
 }
