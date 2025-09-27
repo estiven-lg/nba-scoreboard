@@ -37,6 +37,7 @@ public class TeamService(ITeamRepository teamRepo) : ITeamService
         // Update properties
         existingTeam.Name = teamDto.Name;
         existingTeam.City = teamDto.City;
+        existingTeam.LogoUrl = teamDto.LogoUrl;
 
         var updatedTeam = await _teamRepo.Update(existingTeam);
         return updatedTeam != null ? MapToReadDto(updatedTeam) : null;
@@ -51,7 +52,8 @@ public class TeamService(ITeamRepository teamRepo) : ITeamService
         {
             TeamId = team.TeamId,
             Name = team.Name,
-            City = team.City
+            City = team.City,
+            LogoUrl = team.LogoUrl
         };
     }
 
@@ -60,7 +62,8 @@ public class TeamService(ITeamRepository teamRepo) : ITeamService
         return new Team
         {
             Name = teamDto.Name,
-            City = teamDto.City
+            City = teamDto.City,
+            LogoUrl = teamDto.LogoUrl
         };
     }
 }

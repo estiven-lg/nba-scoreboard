@@ -5,6 +5,8 @@ import { GameList } from '@screens/game-list/game-list';
 import { PlayersListComponent } from '@screens/players-list/players-list';
 import { AuthGuard } from './guards/auth.guard';
 import { Login } from '@screens/login/login';
+import { TeamsListComponent } from '@screens/teams-list/teams-list';
+
 
 export const routes: Routes = [
     { path: '', redirectTo: 'games', pathMatch: 'full' },
@@ -14,5 +16,6 @@ export const routes: Routes = [
     { path: 'control-panel/:id', component: ControlPanelComponent, canActivate: [AuthGuard] },
     { path: 'games', component: GameList },
     { path: 'players', component: PlayersListComponent },
+    { path: 'teams', component: TeamsListComponent },
     { path: '**', redirectTo: 'games' }
 ];

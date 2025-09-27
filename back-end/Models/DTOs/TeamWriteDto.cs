@@ -11,4 +11,7 @@ public class TeamWriteDto
     [Required]
     [StringLength(50)]
     public string City { get; set; } = string.Empty;
+
+    [StringLength(100)]
+    public string? LogoUrl { get; set; }
 }
