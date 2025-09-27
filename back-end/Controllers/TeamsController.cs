@@ -1,9 +1,11 @@
 ﻿using GameDataService.Models;
 using GameDataService.Services.interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 namespace GameDataService.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("api/[controller]")]
 public class TeamsController : ControllerBase

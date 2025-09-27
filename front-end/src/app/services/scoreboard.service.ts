@@ -1,13 +1,13 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { of, Observable } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { environment } from 'environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ScoreboardService {
-  private baseUrl = 'http://localhost:5204/api';
+  private baseUrl = `${environment.apiUrl}/api`;
   private currentGameId: number | null = null;
 
   constructor(private http: HttpClient) {}

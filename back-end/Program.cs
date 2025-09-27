@@ -6,6 +6,9 @@ using GameDataService.Repositories.interfaces;
 using GameDataService.Services;
 using GameDataService.Services.interfaces;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 // using GameDataService.Services;
 
@@ -19,7 +22,9 @@ builder.Services.AddSwaggerGen();
 if (!builder.Environment.IsDevelopment())
 {
     var connectionString = Environment.GetEnvironmentVariable("CONNECTION_STRING");
+    var jwtSecret = Environment.GetEnvironmentVariable("JWT_SECRET");
     builder.Configuration["ConnectionStrings:DefaultConnection"] = connectionString;
+    builder.Configuration["JwtSecret"] = jwtSecret;
 }
 
 // entity framework
@@ -39,12 +44,31 @@ builder.Services.AddCors(options =>
     );
 });
 
+// autention JWT
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+}).AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = false,
+        ValidateAudience = false,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        IssuerSigningKey = new SymmetricSecurityKey(
+            Encoding.ASCII.GetBytes(builder.Configuration["JwtSecret"]))
+    };
+});
+
 // repositories
 builder.Services.AddScoped<IGameRepository, GameRepository>();
 builder.Services.AddScoped<ITeamRepository, TeamRepository>();
 builder.Services.AddScoped<IPlayerRepository, PlayerRepository>();
 builder.Services.AddScoped<ITeamFoulRepository, TeamFoulRepository>();
 builder.Services.AddScoped<IPlayerFoulRepository, PlayerFoulRepository>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 // services
 builder.Services.AddScoped<IGameService, GameService>();
@@ -52,6 +76,7 @@ builder.Services.AddScoped<ITeamService, TeamService>();
 builder.Services.AddScoped<IPlayerService, PlayerService>();
 builder.Services.AddScoped<ITeamFoulService, TeamFoulService>();
 builder.Services.AddScoped<IPlayerFoulService, PlayerFoulService>();
+builder.Services.AddScoped<IAuthService, AuthService>();
 
 builder.Services.AddCors(options =>
 {
@@ -88,10 +113,9 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseCors("AllowAll");
-
 app.UseHttpsRedirection();
-
 app.UseCors("AllowAngular");
-
+app.UseAuthentication();
+app.UseAuthorization();
 app.MapControllers();
 app.Run();

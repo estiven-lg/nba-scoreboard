@@ -2,9 +2,11 @@
 using GameDataService.Models.DTOs;
 using GameDataService.Services.interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 namespace GameDataService.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("api/[controller]")]
 public class GamesController : ControllerBase

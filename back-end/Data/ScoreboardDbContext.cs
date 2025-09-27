@@ -10,6 +10,7 @@ public class ScoreboardDbContext(DbContextOptions<ScoreboardDbContext> options) 
     public DbSet<Game> Games => Set<Game>();
     public DbSet<TeamFoul> TeamFouls => Set<TeamFoul>();
     public DbSet<PlayerFoul> PlayerFouls => Set<PlayerFoul>();
+    public DbSet<User> Users => Set<User>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -64,5 +65,14 @@ public class ScoreboardDbContext(DbContextOptions<ScoreboardDbContext> options) 
             .WithOne(p => p.Team)
             .HasForeignKey(p => p.TeamId)
             .OnDelete(DeleteBehavior.Cascade);
+
+        // admin user
+        var adminUser = new User
+        {
+            Id = 1234,
+            Email = "admin@gmail.com",
+            PasswordHash = "admin" // cambiar en producción
+        };
+        modelBuilder.Entity<User>().HasData(adminUser);
     }
 }
