@@ -107,8 +107,14 @@ using (var scope = app.Services.CreateScope())
     if (!db.Teams.Any())
     {
         db.Teams.AddRange(
-            new Team { Name = "Home", City = "Azul" },
-            new Team { Name = "Visitor", City = "Rojo" }
+            new Team { 
+                Name = "Home", 
+                City = "Villa canales" 
+            },
+            new Team { 
+                Name = "Visitor", 
+                City = "Villa nueva" 
+            }
         );
         db.SaveChanges();
     }

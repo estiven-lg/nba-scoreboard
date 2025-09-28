@@ -30,13 +30,18 @@ services:
       
   frontend:
     build:
-     context: ./front-end
-     dockerfile: Dockerfile
+      context: ./front-end
+      dockerfile: Dockerfile
     container_name: frontend
-    ports:
-     - "${front_port}:80"
     depends_on:
-     - backend
+      - backend
+    environment:
+      VIRTUAL_HOST: nba-scoreboard.duckdns.org
+      LETSENCRYPT_HOST: nba-scoreboard.duckdns.org
+      LETSENCRYPT_EMAIL: laferre.estiven@gmail.com
+      LETSENCRYPT_TEST: "true"
+      HTTPS_METHOD: redirect
+    restart: always
     networks:
       - nba-vps
       
