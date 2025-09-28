@@ -49,6 +49,7 @@ export class GameList {
       this.filteredGames = [];
     });
   }
+  
 
   refreshGames(): void {
     this.loadGames();
@@ -69,9 +70,11 @@ export class GameList {
       );
     }
 
+    console.log(this.statusFilter);
+
     // Filtrar por estado
     if (this.statusFilter) {
-      filtered = filtered.filter(game => game.gameStatus === this.statusFilter);
+      filtered = filtered.filter(game => game.gameStatus === GameStatus[this.statusFilter as keyof typeof GameStatus]);
     }
 
     this.filteredGames = filtered;

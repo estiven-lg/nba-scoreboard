@@ -19,6 +19,11 @@ export class GameService {
   getGames(): Promise<Game[]> {
     return firstValueFrom(this.http.get<Game[]>(this.baseUrl));
   }
+  
+  getGameByStatus(status: string): Promise<Game[]> {
+    const url = status ? `${this.baseUrl}?status=${status}` : this.baseUrl;
+    return firstValueFrom(this.http.get<Game[]>(url));
+  }
 
   getGameById(id: string): Promise<Game> {
     return firstValueFrom(this.http.get<Game>(`${this.baseUrl}/${id}`));

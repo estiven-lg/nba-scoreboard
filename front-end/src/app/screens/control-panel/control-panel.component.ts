@@ -78,7 +78,8 @@ export class ControlPanelComponent implements OnInit {
       periodMinutes: [10, [Validators.required, Validators.min(1)]],
       gameStatus: ['not-started'],
       homePlayer: [{ value: '', disabled: false }],
-      visitorPlayer: [{ value: '', disabled: false }]
+      visitorPlayer: [{ value: '', disabled: false }],
+      gameDate: [new Date().toISOString().slice(0, 16), Validators.required] // Formato para input datetime-local
     });
 
     this.loadTeams();
@@ -141,6 +142,12 @@ export class ControlPanelComponent implements OnInit {
     });
   }
 
+  onDateChange(event: Event) {
+    const input = event.target as HTMLInputElement;
+    const value = input.value;
+    this.controlForm.patchValue({ gameDate: value });
+  }
+
   // ====================
   // 🏆 Game Flow
   // ====================
@@ -148,22 +155,24 @@ export class ControlPanelComponent implements OnInit {
     this.errorMessage = null;
 
     const homeTeamId = this.controlForm.value.homeTeam;
-    const visitorTeamId = this.controlForm.value.visitorTeam;
+    const awayTeamId = this.controlForm.value.visitorTeam;
+    const gameDate = this.controlForm.value.gameDate;
 
     // Validación: no permitir el mismo equipo
-    if (homeTeamId === visitorTeamId) {
+    if (homeTeamId === awayTeamId) {
       this.errorMessage = 'El equipo local y visitante no pueden ser el mismo.';
       // Limpiar mensaje después de 5 segundos
       setTimeout(() => this.errorMessage = null, 5000);
       return;
     }
 
-    const payload:any = {
+    const payload: any = {
       homeTeamId,
-      awayTeamId: visitorTeamId,
-      gameDate: this.controlForm.value.gameDate
+      awayTeamId,
+      gameDate
     };
 
+   
 
     this.api.game.createGame(payload).then((res: any) => {
       const gameId = res.gameId ?? res.id;

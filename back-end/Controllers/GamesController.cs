@@ -34,9 +34,15 @@ public class GamesController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<GameReadDto>>> GetAll()
+    public async Task<ActionResult<IEnumerable<GameReadDto>>> GetAll([FromQuery] string? status = null)
     {
         var games = await _gameService.GetGames();
+        
+        if (!string.IsNullOrEmpty(status))
+        {
+            games = games.Where(g => g.GameStatus?.ToString().Equals(status, StringComparison.OrdinalIgnoreCase) == true);
+        }
+        
         return Ok(games);
     }
 
