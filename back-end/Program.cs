@@ -95,7 +95,14 @@ var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<ScoreboardDbContext>();
-    db.Database.Migrate();
+    try
+    {
+        db.Database.Migrate();
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"No se pudo migrar la base de datos: {ex.Message}");
+    }
 
     if (!db.Teams.Any())
     {
