@@ -24,7 +24,7 @@ public class GamesController : ControllerBase
         try
         {
             var game = await _gameService.CreateGame(dto);
-            return Ok(MapToReadDto(game));
+            return Ok(game);
         }
         catch (InvalidOperationException ex)
         {
@@ -40,15 +40,22 @@ public class GamesController : ControllerBase
         
         if (!string.IsNullOrEmpty(status))
         {
-            games = games.Where(g => g.GameStatus?.ToString().Equals(status, StringComparison.OrdinalIgnoreCase) == true);
+            games = games.Where(g => g.GameStatus.ToString().Equals(status, StringComparison.OrdinalIgnoreCase) == true);
         }
         
         return Ok(games);
     }
 
     [HttpGet("{id:int}")]
-    public async Task<ActionResult<GameReadDto>> Get(int id) =>
-        (await _gameService.GetGame(id)) is { } g ? Ok(MapToReadDto(g)) : NotFound();
+    public async Task<ActionResult<GameReadDto>> Get(int id)
+    {
+        var game = await _gameService.GetGame(id);
+        if (game == null)
+        {
+            return NotFound();
+        }
+        return Ok(game);
+    }
 
     // Puntuación
     [Authorize]
@@ -56,7 +63,7 @@ public class GamesController : ControllerBase
     public async Task<ActionResult<GameReadDto>> HomePoints(int id, [FromBody] PointsDto dto)
     {
         var game = await _gameService.AddPointsAsync(id, home: true, dto.Points);
-        return Ok(MapToReadDto(game));
+        return Ok(game);
     }
 
     [Authorize]
@@ -64,7 +71,7 @@ public class GamesController : ControllerBase
     public async Task<ActionResult<GameReadDto>> VisitorPoints(int id, [FromBody] PointsDto dto)
     {
         var game = await _gameService.AddPointsAsync(id, home: false, dto.Points);
-        return Ok(MapToReadDto(game));
+        return Ok(game);
     }
 
     [Authorize]
@@ -72,7 +79,7 @@ public class GamesController : ControllerBase
     public async Task<ActionResult<GameReadDto>> HomeMinus(int id)
     {
         var game = await _gameService.SubtractPointAsync(id, home: true);
-        return Ok(MapToReadDto(game));
+        return Ok(game);
     }
 
     [Authorize]
@@ -80,7 +87,7 @@ public class GamesController : ControllerBase
     public async Task<ActionResult<GameReadDto>> VisitorMinus(int id)
     {
         var game = await _gameService.SubtractPointAsync(id, home: false);
-        return Ok(MapToReadDto(game));
+        return Ok(game);
     }
 
     // Tiempo
@@ -89,7 +96,7 @@ public class GamesController : ControllerBase
     public async Task<ActionResult<GameReadDto>> Start(int id, [FromBody] TimeDto dto)
     {
         var game = await _gameService.StartAsync(id, dto.PeriodSeconds);
-        return Ok(MapToReadDto(game));
+        return Ok(game);
     }
 
     [Authorize]
@@ -97,7 +104,7 @@ public class GamesController : ControllerBase
     public async Task<ActionResult<GameReadDto>> Pause(int id)
     {
         var game = await _gameService.PauseAsync(id);
-        return Ok(MapToReadDto(game));
+        return Ok(game);
     }
 
     [Authorize]
@@ -105,14 +112,14 @@ public class GamesController : ControllerBase
     public async Task<ActionResult<GameReadDto>> Resume(int id)
     {
         var game = await _gameService.ResumeAsync(id);
-        return Ok(MapToReadDto(game));
+        return Ok(game);
     }
 
     [HttpPost("{id:int}/reset-period")]
     public async Task<ActionResult<GameReadDto>> ResetPeriod(int id, [FromBody] TimeDto dto)
     {
         var game = await _gameService.ResetPeriodAsync(id, dto.PeriodSeconds);
-        return Ok(MapToReadDto(game));
+        return Ok(game);
     }
 
     // Cuartos
@@ -121,7 +128,7 @@ public class GamesController : ControllerBase
     public async Task<ActionResult<GameReadDto>> NextPeriod(int id)
     {
         var game = await _gameService.NextPeriodAsync(id);
-        return Ok(MapToReadDto(game));
+        return Ok(game);
     }
 
     [Authorize]
@@ -129,7 +136,7 @@ public class GamesController : ControllerBase
     public async Task<ActionResult<GameReadDto>> PreviousPeriod(int id)
     {
         var game = await _gameService.PreviousPeriodAsync(id);
-        return Ok(MapToReadDto(game));
+        return Ok(game);
     }
 
     // General
@@ -138,7 +145,7 @@ public class GamesController : ControllerBase
     public async Task<ActionResult<GameReadDto>> ResetGame(int id)
     {
         var game = await _gameService.ResetGameAsync(id);
-        return Ok(MapToReadDto(game));
+        return Ok(game);
     }
 
     [Authorize]
@@ -146,7 +153,7 @@ public class GamesController : ControllerBase
     public async Task<ActionResult<GameReadDto>> Suspend(int id)
     {
         var game = await _gameService.SuspendAsync(id);
-        return Ok(MapToReadDto(game));
+        return Ok(game);
     }
 
     [Authorize]
@@ -154,7 +161,7 @@ public class GamesController : ControllerBase
     public async Task<ActionResult<GameReadDto>> Finish(int id)
     {
         var game = await _gameService.FinishGameAsync(id);
-        return Ok(MapToReadDto(game));
+        return Ok(game);
     }
 
     // "Guardar": los cambios ya se guardan en cada acción; este endpoint es opcional/no-op.
@@ -204,3 +211,5 @@ public class GamesController : ControllerBase
         };
     }
 }
+
+

@@ -16,14 +16,19 @@ public class GameRepository : IGameRepository
     {
         return await _context.Games.Include(g => g.HomeTeam)
                                      .Include(g => g.AwayTeam)
+                                      .Include(g => g.TeamFouls)
                                      .ToListAsync();
     }
 
     public async Task<Game?> GetById(int id)
     {
-        return await _context.Games.Include(g => g.HomeTeam)
-                                     .Include(g => g.AwayTeam)
-                                     .FirstOrDefaultAsync(g => g.GameId == id);
+        return await _context.Games
+            .Include(g => g.HomeTeam)
+            .Include(g => g.HomeTeam.Players)
+            .Include(g => g.AwayTeam)
+            .Include(g => g.AwayTeam.Players)
+            .Include(g => g.TeamFouls)
+            .FirstOrDefaultAsync(g => g.GameId == id);
     }
 
     public async Task<Game> Add(Game game)

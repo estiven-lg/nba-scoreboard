@@ -11,4 +11,6 @@ public class GameReadDto
     public int AwayTeamId { get; set; }
     public TeamReadDto? AwayTeam { get; set; }
     public int PeriodSeconds { get; set; }
+    public TeamFoulReadDto? HomeTeamFouls { get; set; }
+    public TeamFoulReadDto? AwayTeamFouls { get; set; }
 }

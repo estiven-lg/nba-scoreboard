@@ -34,31 +34,43 @@ export class Scoreboard implements OnInit, OnDestroy {
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
     if (id) {
-      this.api.game.getGameById(id).then((data: any) => {
-        this.homeScore = data.homeScore;
-        this.awayScore = data.awayScore;
-        this.period = data.currentPeriod;
-        this.homeFouls = data.homeFouls || 0;
-        this.awayFouls = data.awayFouls || 0;
-        this.homeTeamLogo = data.homeTeam?.logoUrl || this.homeTeamLogo;
-        this.awayTeamLogo = data.awayTeam?.logoUrl || this.awayTeamLogo;
-
-        // Configurar el temporizador si hay periodStartTime
-        if (data.periodStartTime) {
-          this.periodStartTime = new  Date(data.periodStartTime + 'Z');
-          this.startTimer();
-        }
-      });
+      // Inicializar datos del juego
+      this.loadGameData(id);
+      
+      // Iniciar el timer que actualizará los datos cada segundo
+      this.startTimer(id);
     }
   }
 
-  private startTimer(): void {
+  private loadGameData(id: string): void {
+    this.api.game.getGameById(id).then((data: any) => {
+      this.homeScore = data.homeScore;
+      this.awayScore = data.awayScore;
+      this.period = data.currentPeriod;
+      this.homeFouls = data.homeFouls || 0;
+      this.awayFouls = data.awayFouls || 0;
+      this.homeTeamLogo = data.homeTeam?.logoUrl || this.homeTeamLogo;
+      this.awayTeamLogo = data.awayTeam?.logoUrl || this.awayTeamLogo;
+
+      // Configurar el tiempo si hay periodStartTime
+      if (data.periodStartTime) {
+        this.periodStartTime = new Date(data.periodStartTime + 'Z');
+        this.updateTime();
+      }
+    }).catch(error => {
+      console.error('Error loading game data:', error);
+    });
+  }
+
+  private startTimer(id: string): void {
     if (this.timerInterval) {
       clearInterval(this.timerInterval);
     }
 
     this.timerInterval = setInterval(() => {
       this.updateTime();
+      // Recargar datos del juego cada segundo
+      this.loadGameData(id);
     }, 1000);
   }
 
@@ -69,8 +81,6 @@ export class Scoreboard implements OnInit, OnDestroy {
     const elapsedMs = differenceInMilliseconds(now, this.periodStartTime);
     const remainingMs = this.periodDurationMs - elapsedMs;
 
-    console.log(format(this.periodStartTime, 'HH:mm:ss'));
-    console.log(format(now, 'HH:mm:ss'));
 
     if (remainingMs <= 0) {
       this.time = "00:00";

@@ -6,4 +6,5 @@ public class TeamReadDto
     public string Name { get; set; } = string.Empty;
     public string? City { get; set; }
     public string? LogoUrl { get; set; }
+    public PlayerReadDto[]? Players { get; set; }
 }

@@ -12,4 +12,5 @@ export interface Game {
   awayScore: number;
   currentPeriod: number;
   timeRemaining: string;
+  
 }

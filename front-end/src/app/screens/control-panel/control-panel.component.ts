@@ -7,14 +7,9 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Api } from '@api/api';
 import { Game } from '@models/Game';
 import { Team } from '@models/index';
+import { GameStatus } from '@models/GameStatus';
 
-enum GameStatus {
-  NOT_STARTED = 0,
-  RUNNING = 1,
-  PAUSED = 2,
-  FINISHED = 3,
-  SUSPENDED = 4
-}
+
 
 @Component({
   selector: 'app-control-panel',
@@ -101,8 +96,8 @@ export class ControlPanelComponent implements OnInit {
       }
 
       // Cargar jugadores de ambos equipos
-      // this.homePlayers = data.homeTeam?.players || [];
-      // this.visitorPlayers = data.awayTeam?.players || [];
+      this.homePlayers = data.homeTeam?.players || [];
+      this.visitorPlayers = data.awayTeam?.players || [];
 
       this.updateControlsByGameStatus();
     });
@@ -110,12 +105,12 @@ export class ControlPanelComponent implements OnInit {
 
   getGameStatusName(status: number): string {
     switch (status) {
-      case GameStatus.NOT_STARTED: return 'NOT_STARTED';
-      case GameStatus.RUNNING: return 'RUNNING';
-      case GameStatus.PAUSED: return 'PAUSED';
-      case GameStatus.FINISHED: return 'FINISHED';
-      case GameStatus.SUSPENDED: return 'SUSPENDED';
-      default: return 'UNKNOWN';
+      case GameStatus.NOT_STARTED: return 'Programado';
+      case GameStatus.RUNNING: return 'En Juego';
+      case GameStatus.PAUSED: return 'Pausado';
+      case GameStatus.FINISHED: return 'Finalizado';
+      case GameStatus.SUSPENDED: return 'Suspendido';
+      default: return 'Desconocido';
     }
   }
 
