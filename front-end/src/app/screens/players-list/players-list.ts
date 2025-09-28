@@ -4,6 +4,7 @@ import { Api } from '@api/api';
 import { PlayerDetailsModalComponent, PlayerEditModalComponent, PlayerDeleteModalComponent, PlayerCreateModalComponent, PlayerSaveConfirmModalComponent } from './components';
 import { PlayerWriteDto } from '@models/PlayerWriteDto';
 import { Player } from '@models/Player';
+import { AuthService } from '@services/auth.service';
 
 @Component({
   selector: 'app-players-list',
@@ -30,7 +31,7 @@ export class PlayersListComponent implements OnInit {
 
   searchTerm = signal<string>('');           // Término actual
 
-  constructor(private api: Api) { }
+  constructor(private api: Api, public authService: AuthService) { }
 
   ngOnInit() {
     this.loadPlayers();

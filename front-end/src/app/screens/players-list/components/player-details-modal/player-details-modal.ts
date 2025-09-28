@@ -1,6 +1,7 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Player } from '@models/Player';
+import { AuthService } from '@services/auth.service';
 
 @Component({
   selector: 'app-player-details-modal',
@@ -15,6 +16,8 @@ export class PlayerDetailsModalComponent {
   @Output() close = new EventEmitter<void>();
   @Output() edit = new EventEmitter<void>();
   @Output() delete = new EventEmitter<void>();
+
+  constructor(public authService: AuthService) {}
 
   onClose() {
     this.close.emit();

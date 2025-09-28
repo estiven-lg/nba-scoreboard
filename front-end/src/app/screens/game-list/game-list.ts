@@ -5,6 +5,7 @@ import { CommonModule, DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Game } from '@models/index';
 import { GameStatus } from '@models/GameStatus';
+import { AuthService } from '@services/auth.service';
 
 @Component({
   selector: 'app-game-list',
@@ -20,7 +21,7 @@ export class GameList {
   searchTerm: string = '';
   statusFilter: GameStatus | '' = '';
 
-  constructor(private api: Api, private router: Router) { }
+  constructor(private api: Api, private router: Router, public authService: AuthService) { }
   ngOnInit(): void {
     this.loadGames();
   }
@@ -166,20 +167,9 @@ export class GameList {
 
   deleteGame(gameId: number): void {
     if (confirm('¿Estás seguro de que quieres eliminar este partido?')) {
-      // Nota: Esta función requiere que se implemente deleteGame en el GameService
-      // Por ahora, mostraremos un mensaje de funcionalidad no disponible
       console.warn('Delete game functionality not implemented in API service');
-      alert('Funcionalidad de eliminar partido no implementada aún.');
+      alert('Funcionalidad de eliminar partido no implementada aún :(.');
 
-      // Cuando se implemente en el API service, descomentar:
-      /*
-      this.api.game.deleteGame(gameId).then(() => {
-        this.loadGames(); // Recargar la lista después de eliminar
-      }).catch((error: any) => {
-        console.error('Error deleting game:', error);
-        alert('Error al eliminar el partido. Intenta de nuevo.');
-      });
-      */
     }
   }
 

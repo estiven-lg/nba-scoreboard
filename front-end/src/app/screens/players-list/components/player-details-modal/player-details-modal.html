@@ -21,11 +21,11 @@
       <div><span class="font-semibold text-white">Equipo ID:</span> {{ player.teamId }}</div>
     </div>
     <div class="mt-6 flex justify-end space-x-4">
-      <button (click)="onEdit()"
+      <button (click)="onEdit()" *ngIf="authService.isAuthenticated()"
         class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition duration-200">
         Editar
       </button>
-      <button (click)="onDelete()"
+      <button (click)="onDelete()" *ngIf="authService.isAuthenticated()"
         class="bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-4 rounded-lg transition duration-200">
         Eliminar
       </button>

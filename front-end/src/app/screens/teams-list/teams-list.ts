@@ -10,6 +10,7 @@ import {
   TeamCreateModalComponent,
   TeamSaveConfirmModalComponent
 } from './components';
+import { AuthService } from '@services/auth.service';
 
 @Component({
   selector: 'app-teams-list',
@@ -64,7 +65,7 @@ export class TeamsListComponent implements OnInit {
 
   }
 
-  constructor(private api: Api) { }
+  constructor(private api: Api, public authService: AuthService) { }
 
   async ngOnInit() {
     await this.loadTeams();

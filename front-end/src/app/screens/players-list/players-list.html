@@ -4,28 +4,24 @@
       <h1 class="text-3xl sm:text-4xl font-extrabold text-white text-center sm:text-left">
         Lista de Jugadores
       </h1>
-      
+
       <!-- Search and Create Button Container -->
       <div class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4 w-full sm:w-auto">
         <!-- Search Input -->
         <div class="relative">
           <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
             <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
             </svg>
           </div>
-          <input
-            type="text"
-            [value]="searchTerm()"
-            (input)="onSearchChange($event)"
-            (keyup.enter)="makeSearch()"
+          <input type="text" [value]="searchTerm()" (input)="onSearchChange($event)" (keyup.enter)="makeSearch()"
             placeholder="Buscar jugadores..."
-            class="block w-full pl-10 pr-4 py-3 border border-gray-600 rounded-lg bg-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent sm:w-64 transition-all duration-200"
-          >
+            class="block w-full pl-10 pr-4 py-3 border border-gray-600 rounded-lg bg-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent sm:w-64 transition-all duration-200">
         </div>
-        
+
         <!-- Create Button -->
-        <button (click)="openCreateModal()"
+        <button (click)="openCreateModal()" *ngIf="authService.isAuthenticated()"
           class="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-lg transition duration-200 flex items-center justify-center space-x-2 whitespace-nowrap">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
@@ -119,6 +115,7 @@
                   </svg>
                 </button>
                 <button (click)="selectedPlayer.set(player); openEditModal(); $event.stopPropagation()"
+                  *ngIf="authService.isAuthenticated()"
                   class="bg-purple-600 hover:bg-purple-700 text-white font-medium py-1 px-2 rounded-md transition duration-200 flex items-center space-x-1"
                   title="Editar">
                   <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -143,43 +140,27 @@
 </div>
 
 <!-- Modal de Detalles -->
-<app-player-details-modal 
-  [show]="showDetailsModal()" 
-  [player]="selectedPlayer()"
-  (close)="closeDetailsModal()"
-  (edit)="openEditModal()"
-  (delete)="openDeleteModal()">
+<app-player-details-modal [show]="showDetailsModal()" [player]="selectedPlayer()" (close)="closeDetailsModal()"
+  (edit)="openEditModal()" (delete)="openDeleteModal()">
 </app-player-details-modal>
 
 
 
 <!-- Modal de Edición -->
-<app-player-edit-modal 
-  [show]="showEditModal()" 
-  [player]="tempEditedPlayer()"
-  (close)="closeEditToDetails()"
+<app-player-edit-modal [show]="showEditModal()" [player]="tempEditedPlayer()" (close)="closeEditToDetails()"
   (save)="onSaveEdit($event)">
 </app-player-edit-modal>
 
 <!-- Modal de Confirmación para Eliminar -->
-<app-player-delete-modal 
-  [show]="showDeleteModal()" 
-  [player]="selectedPlayer()"
-  (close)="closeDeleteToDetails()"
+<app-player-delete-modal [show]="showDeleteModal()" [player]="selectedPlayer()" (close)="closeDeleteToDetails()"
   (confirm)="onConfirmDelete()">
 </app-player-delete-modal>
 
 <!-- Modal para Crear Nuevo Jugador -->
-<app-player-create-modal 
-  [show]="showCreateModal()" 
-  (close)="closeModals()"
-  (create)="onCreatePlayer($event)">
+<app-player-create-modal [show]="showCreateModal()" (close)="closeModals()" (create)="onCreatePlayer($event)">
 </app-player-create-modal>
 
 <!-- Modal de confirmación para guardar cambios -->
-<app-player-save-confirm-modal 
-  [show]="showSaveConfirmModal()" 
-  [player]="selectedPlayer()"
-  (close)="closeSaveToDetails()"
-  (confirm)="onConfirmSave()">
+<app-player-save-confirm-modal [show]="showSaveConfirmModal()" [player]="selectedPlayer()"
+  (close)="closeSaveToDetails()" (confirm)="onConfirmSave()">
 </app-player-save-confirm-modal>
