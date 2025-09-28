@@ -5,11 +5,12 @@ import { PlayerDetailsModalComponent, PlayerEditModalComponent, PlayerDeleteModa
 import { PlayerWriteDto } from '@models/PlayerWriteDto';
 import { Player } from '@models/Player';
 import { AuthService } from '@services/auth.service';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-players-list',
   standalone: true,
-  imports: [FormsModule, PlayerDetailsModalComponent, PlayerEditModalComponent, PlayerDeleteModalComponent, PlayerCreateModalComponent, PlayerSaveConfirmModalComponent],
+  imports: [CommonModule,FormsModule, PlayerDetailsModalComponent, PlayerEditModalComponent, PlayerDeleteModalComponent, PlayerCreateModalComponent, PlayerSaveConfirmModalComponent],
   templateUrl: './players-list.html',
   styleUrls: ['./players-list.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,

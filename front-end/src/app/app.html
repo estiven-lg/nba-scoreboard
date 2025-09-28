@@ -18,6 +18,27 @@
         <mat-icon>groups</mat-icon>
         <span>Teams</span>
       </a>
+      
+      <!-- Authentication buttons -->
+      <div class="auth-section">
+        <button *ngIf="!authService.isAuthenticated()" 
+                (click)="login()"
+                class="auth-button login-btn">
+          <mat-icon>login</mat-icon>
+          <span>Login</span>
+        </button>
+        
+        <div *ngIf="authService.isAuthenticated()" class="user-menu">
+          <span class="user-info">
+            <mat-icon>account_circle</mat-icon>
+            <span>Admin</span>
+          </span>
+          <button (click)="logout()" class="auth-button logout-btn">
+            <mat-icon>logout</mat-icon>
+            <span>Logout</span>
+          </button>
+        </div>
+      </div>
     </div>
   </div>
 </nav>
