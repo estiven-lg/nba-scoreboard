@@ -7,7 +7,7 @@ export interface Game {
   homeTeam: Team;
   awayTeam: Team;
   gameDate: string;
-  gameStatus: string;
+  gameStatus: number; // 0: Scheduled, 1: Live, 2: Finished, 3: Paused, etc.
   homeScore: number;
   awayScore: number;
   currentPeriod: number;

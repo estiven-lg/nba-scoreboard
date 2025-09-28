@@ -4,6 +4,7 @@ import { Api } from '@api/api';
 import { CommonModule, DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Game } from '@models/index';
+import { GameStatus } from '@models/GameStatus';
 
 @Component({
   selector: 'app-game-list',
@@ -17,7 +18,7 @@ export class GameList {
   games: Game[] = [];
   filteredGames: Game[] = [];
   searchTerm: string = '';
-  statusFilter: string = '';
+  statusFilter: GameStatus | '' = '';
 
   constructor(private api: Api, private router: Router) { }
   ngOnInit(): void {
@@ -60,7 +61,7 @@ export class GameList {
     // Filtrar por término de búsqueda
     if (this.searchTerm.trim()) {
       const searchLower = this.searchTerm.toLowerCase();
-      filtered = filtered.filter(game => 
+      filtered = filtered.filter(game =>
         game.homeTeam?.name?.toLowerCase().includes(searchLower) ||
         game.awayTeam?.name?.toLowerCase().includes(searchLower) ||
         game.homeTeam?.city?.toLowerCase().includes(searchLower) ||
@@ -88,11 +89,11 @@ export class GameList {
   }
 
   getFinishedGamesCount(): number {
-    return this.games.filter(game => game.gameStatus === 'FINISHED').length;
+    return this.games.filter(game => game.gameStatus === GameStatus.FINISHED).length;
   }
 
   getScheduledGamesCount(): number {
-    return this.games.filter(game => game.gameStatus === 'SCHEDULED').length;
+    return this.games.filter(game => game.gameStatus === GameStatus.NOT_STARTED).length;
   }
 
   // Métodos de utilidad para la UI
@@ -100,47 +101,43 @@ export class GameList {
     return game.gameId;
   }
 
-  isLiveGame(status: string): boolean {
-    return status === 'LIVE' || status === 'IN_PROGRESS' || status === 'ACTIVE';
+  isLiveGame(status: number): boolean {
+    return status === GameStatus.RUNNING;
   }
 
   isWinning(teamScore: number, opponentScore: number): boolean {
     return teamScore > opponentScore && teamScore > 0;
   }
 
-  getStatusBadgeClass(status: string): string {
+  getStatusBadgeClass(status: GameStatus): string {
     switch (status) {
-      case 'LIVE':
-      case 'IN_PROGRESS':
-      case 'ACTIVE':
+      case GameStatus.RUNNING:
         return 'bg-red-500 text-white animate-pulse';
-      case 'FINISHED':
+      case GameStatus.FINISHED:
         return 'bg-green-500 text-white';
-      case 'SCHEDULED':
+      case GameStatus.NOT_STARTED:
         return 'bg-yellow-500 text-white';
-      case 'SUSPENDED':
+      case GameStatus.SUSPENDED:
         return 'bg-orange-500 text-white';
-      case 'CANCELLED':
+      case GameStatus.PAUSED:
         return 'bg-gray-500 text-white';
       default:
         return 'bg-gray-400 text-white';
     }
   }
 
-  getGameStatusText(status: string): string {
+  getGameStatusText(status: number): string {
     switch (status) {
-      case 'LIVE':
-      case 'IN_PROGRESS':
-      case 'ACTIVE':
-        return 'En Vivo';
-      case 'FINISHED':
-        return 'Finalizado';
-      case 'SCHEDULED':
+      case GameStatus.NOT_STARTED:
         return 'Programado';
-      case 'SUSPENDED':
+      case GameStatus.RUNNING:
+        return 'En Vivo';
+      case GameStatus.PAUSED:
+        return 'Pausado';
+      case GameStatus.FINISHED:
+        return 'Finalizado';
+      case GameStatus.SUSPENDED:
         return 'Suspendido';
-      case 'CANCELLED':
-        return 'Cancelado';
       default:
         return 'Desconocido';
     }
@@ -170,7 +167,7 @@ export class GameList {
       // Por ahora, mostraremos un mensaje de funcionalidad no disponible
       console.warn('Delete game functionality not implemented in API service');
       alert('Funcionalidad de eliminar partido no implementada aún.');
-      
+
       // Cuando se implemente en el API service, descomentar:
       /*
       this.api.game.deleteGame(gameId).then(() => {
