@@ -100,8 +100,8 @@ export class ControlPanelComponent implements OnInit {
       }
 
       // Cargar jugadores de ambos equipos
-      this.homePlayers = data.homeTeam?.players || [];
-      this.visitorPlayers = data.awayTeam?.players || [];
+      // this.homePlayers = data.homeTeam?.players || [];
+      // this.visitorPlayers = data.awayTeam?.players || [];
 
       this.updateControlsByGameStatus();
     });
@@ -161,7 +161,7 @@ export class ControlPanelComponent implements OnInit {
     const payload:any = {
       homeTeamId,
       awayTeamId: visitorTeamId,
-      gameDate: new Date().toISOString()
+      gameDate: this.controlForm.value.gameDate
     };
 
 
@@ -203,8 +203,8 @@ export class ControlPanelComponent implements OnInit {
         gameStatus: res.gameStatus
       });
 
-      this.homePlayers = res.homeTeam.players || [];
-      this.visitorPlayers = res.awayTeam.players || [];
+      // this.homePlayers = res.homeTeam.players || [];
+      // this.visitorPlayers = res.awayTeam.players || [];
       this.currentQuarter = res.currentPeriod;
 
       this.updateControlsByGameStatus();

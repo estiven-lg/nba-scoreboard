@@ -36,7 +36,7 @@ public class TeamsController : ControllerBase
     }
 
     [HttpPost]
-    // [Authorize]
+    [Authorize]
     public async Task<ActionResult<TeamReadDto>> CreateTeam(TeamWriteDto team)
     {
         var createdTeam = await _teamService.AddAsync(team);
@@ -44,7 +44,7 @@ public class TeamsController : ControllerBase
     }
 
     [HttpPut("{id}")]
-    // [Authorize]
+    [Authorize]
     public async Task<ActionResult<TeamReadDto>> UpdateTeam(int id, TeamWriteDto teamDto)
     {
         var updatedTeam = await _teamService.UpdateAsync(id, teamDto);
@@ -57,7 +57,7 @@ public class TeamsController : ControllerBase
     }
 
     [HttpDelete("{id}")]
-    // [Authorize]
+    [Authorize]
     public async Task<ActionResult> DeleteTeam(int id)
     {
         var result = await _teamService.DeleteAsync(id);

@@ -14,7 +14,6 @@ public class GameService(IGameRepository gameRepo, ScoreboardDbContext ctx) : IG
     // public async Task<bool> IsTeamInActiveGameAsync(int teamId)
     // {
     //     var activeStatuses = new[] { GameStatus.NOT_STARTED, GameStatus.RUNNING, GameStatus.PAUSED };
-
     // }
 
     public async Task<Game> CreateGame(GameWriteDto dto)
@@ -31,7 +30,7 @@ public class GameService(IGameRepository gameRepo, ScoreboardDbContext ctx) : IG
             AwayTeamId = dto.AwayTeamId,
             CurrentPeriod = 1,
             GameStatus = GameStatus.NOT_STARTED,
-            RemainingTime = dto.PeriodSeconds ?? 600,
+            RemainingTime = 600, // 10 minutos por defecto
         };
 
         await _gameRepo.Add(game);

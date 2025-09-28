@@ -37,7 +37,7 @@ public class GamesController : ControllerBase
     public async Task<ActionResult<IEnumerable<GameReadDto>>> GetAll()
     {
         var games = await _gameService.GetGames();
-        return Ok(games.Select(MapToReadDto));
+        return Ok(games);
     }
 
     [HttpGet("{id:int}")]

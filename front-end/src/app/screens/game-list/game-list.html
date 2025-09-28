@@ -1,60 +1,279 @@
-<div class="bg-gray-900 text-white min-h-screen p-6">
-  <div class="flex justify-between items-center mb-6">
-    <h2 class="text-3xl font-bold">Partidos de la NBA</h2>
-    <button 
-      (click)="crearNuevoJuego()" 
-      class="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-lg transition duration-200 flex items-center space-x-2">
-      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
-      </svg>
-      <span>Nuevo Juego</span>
-    </button>
-  </div>
-  
-  <div class="grid gap-4">
-  <div *ngFor="let game of games" class="bg-gray-800 p-4 rounded-lg shadow-lg hover:bg-gray-700 transition">
-      <div class="flex items-center justify-between">
-        <!-- Equipos -->
-        <div class="flex items-center space-x-6 cursor-pointer" (click)="irAScoreboard(game.gameId)">
-          <img [src]="game.homeTeam.logoUrl" alt="Home Logo" class="h-12 w-12">
-          <div class="text-right">
-            <h3 class="text-xl font-bold">{{ game.homeTeam.name }}</h3>
-            <p class="text-lg text-green-400">{{ game.homeScore }}</p>
-          </div>
-        </div>
+<div class="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white min-h-screen p-6">
+  <!-- Header Section -->
+  <div class="max-w-7xl mx-auto">
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 space-y-4 md:space-y-0">
+      <div>
+        <h1 class="text-4xl font-bold bg-gradient-to-r from-blue-400 to-purple-600 bg-clip-text text-transparent">
+          🏀 Partidos NBA
+        </h1>
+        <p class="text-gray-400 mt-2">Gestiona y visualiza todos los partidos en tiempo real</p>
+      </div>
+      
+      <div class="flex flex-col sm:flex-row gap-3">
+        <button 
+          (click)="refreshGames()" 
+          class="bg-gray-700 hover:bg-gray-600 text-white font-medium py-3 px-6 rounded-lg transition duration-200 flex items-center space-x-2 border border-gray-600">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+          </svg>
+          <span>Actualizar</span>
+        </button>
+        <button 
+          (click)="crearNuevoJuego()" 
+          class="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-bold py-3 px-6 rounded-lg transition duration-200 flex items-center space-x-2 shadow-lg">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+          </svg>
+          <span>Nuevo Juego</span>
+        </button>
+      </div>
+    </div>
 
-        <div class="text-center cursor-pointer" (click)="irAScoreboard(game.gameId)">
-          <p class="text-gray-400">{{ game.gameDate | date:'short' }}</p>
-          <p class="text-yellow-400">Periodo: {{ game.currentPeriod }}</p>
-        </div>
-
-        <div class="flex items-center space-x-6">
-          <div class="text-left cursor-pointer" (click)="irAScoreboard(game.gameId)">
-            <h3 class="text-xl font-bold">{{ game.awayTeam.name }}</h3>
-            <p class="text-lg text-red-400">{{ game.awayScore }}</p>
+    <!-- Stats Summary -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+      <div class="bg-gray-800 bg-opacity-50 backdrop-blur-lg rounded-xl p-4 border border-gray-700">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-gray-400 text-sm">Total Partidos</p>
+            <p class="text-2xl font-bold text-blue-400">{{ games?.length || 0 }}</p>
           </div>
-          <img [src]="game.awayTeam.logoUrl" alt="Away Logo" class="h-12 w-12 cursor-pointer" (click)="irAScoreboard(game.gameId)">
+          <div class="text-blue-400">
+            <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+            </svg>
+          </div>
         </div>
       </div>
       
-      <!-- Botones de acción -->
-      <div class="flex justify-end space-x-3 mt-4 pt-4 border-t border-gray-700">
-        <button 
-          (click)="irAScoreboard(game.gameId)"
-          class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition duration-200 flex items-center space-x-2">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
-          </svg>
-          <span>Ver Marcador</span>
-        </button>
-        <button 
-          (click)="irAControlPanel(game.gameId)"
-          class="bg-purple-600 hover:bg-purple-700 text-white font-medium py-2 px-4 rounded-lg transition duration-200 flex items-center space-x-2">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4"></path>
-          </svg>
-          <span>Panel Control</span>
-        </button>
+      <div class="bg-gray-800 bg-opacity-50 backdrop-blur-lg rounded-xl p-4 border border-gray-700">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-gray-400 text-sm">En Vivo</p>
+            <p class="text-2xl font-bold text-green-400">{{ getActiveGamesCount() }}</p>
+          </div>
+          <div class="text-green-400">
+            <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24">
+              <circle cx="12" cy="12" r="10"/>
+              <circle cx="12" cy="12" r="3"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+      
+      <div class="bg-gray-800 bg-opacity-50 backdrop-blur-lg rounded-xl p-4 border border-gray-700">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-gray-400 text-sm">Finalizados</p>
+            <p class="text-2xl font-bold text-purple-400">{{ getFinishedGamesCount() }}</p>
+          </div>
+          <div class="text-purple-400">
+            <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+      
+      <div class="bg-gray-800 bg-opacity-50 backdrop-blur-lg rounded-xl p-4 border border-gray-700">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-gray-400 text-sm">Programados</p>
+            <p class="text-2xl font-bold text-yellow-400">{{ getScheduledGamesCount() }}</p>
+          </div>
+          <div class="text-yellow-400">
+            <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.94-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Filter and Search -->
+    <div class="flex flex-col sm:flex-row gap-4 mb-6">
+      <div class="flex-1">
+        <input 
+          type="text" 
+          placeholder="🔍 Buscar por equipo..."
+          [(ngModel)]="searchTerm"
+          (input)="filterGames()"
+          class="w-full bg-gray-800 bg-opacity-50 border border-gray-700 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent backdrop-blur-lg">
+      </div>
+      <select 
+        [(ngModel)]="statusFilter"
+        (change)="filterGames()"
+        class="bg-gray-800 bg-opacity-50 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 backdrop-blur-lg">
+        <option value="">Todos los estados</option>
+        <option value="SCHEDULED">Programados</option>
+        <option value="LIVE">En Vivo</option>
+        <option value="FINISHED">Finalizados</option>
+        <option value="SUSPENDED">Suspendidos</option>
+      </select>
+    </div>
+  </div>
+  
+  <!-- Games List -->
+  <div class="max-w-7xl mx-auto">
+    <!-- Loading State -->
+    <div *ngIf="!games" class="flex justify-center items-center py-20">
+      <div class="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-500"></div>
+    </div>
+
+    <!-- Empty State -->
+    <div *ngIf="filteredGames && filteredGames.length === 0 && games && games.length > 0" class="text-center py-20">
+      <div class="text-6xl mb-4">🔍</div>
+      <h3 class="text-2xl font-bold text-gray-400 mb-2">No se encontraron partidos</h3>
+      <p class="text-gray-500 mb-6">Intenta con otros términos de búsqueda o filtros</p>
+      <button 
+        (click)="clearFilters()" 
+        class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition duration-200">
+        Limpiar Filtros
+      </button>
+    </div>
+
+    <div *ngIf="games && games.length === 0" class="text-center py-20">
+      <div class="text-6xl mb-4">🏀</div>
+      <h3 class="text-2xl font-bold text-gray-400 mb-2">No hay partidos disponibles</h3>
+      <p class="text-gray-500 mb-6">Crea un nuevo partido para comenzar</p>
+      <button 
+        (click)="crearNuevoJuego()" 
+        class="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-bold py-3 px-6 rounded-lg transition duration-200">
+        Crear Primer Partido
+      </button>
+    </div>
+
+    <!-- Games Grid -->
+    <div *ngIf="filteredGames && filteredGames.length > 0" class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div *ngFor="let game of filteredGames; trackBy: trackByGameId" 
+           class="bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-6 border border-gray-700 hover:border-blue-500 transition-all duration-300 transform hover:scale-[1.02] shadow-xl hover:shadow-2xl">
+        
+        <!-- Game Status Badge -->
+        <div class="flex justify-between items-start mb-4">
+          <div class="flex items-center space-x-2">
+            <span [ngClass]="getStatusBadgeClass(game.gameStatus)" 
+                  class="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide">
+              {{ getGameStatusText(game.gameStatus) }}
+            </span>
+            <span *ngIf="isLiveGame(game.gameStatus)" class="flex items-center text-red-500 text-xs">
+              <span class="animate-pulse w-2 h-2 bg-red-500 rounded-full mr-1"></span>
+              EN VIVO
+            </span>
+          </div>
+          <div class="text-right text-sm text-gray-400">
+            <p>ID: #{{ game.gameId }}</p>
+            <p>{{ game.gameDate | date:'MMM d, y' }}</p>
+            <p>{{ game.gameDate | date:'h:mm a' }}</p>
+          </div>
+        </div>
+
+        <!-- Teams and Score -->
+        <div class="mb-6 cursor-pointer" (click)="irAScoreboard(game.gameId)">
+          <!-- Home Team -->
+          <div class="flex items-center justify-between mb-4">
+            <div class="flex items-center space-x-4">
+              <div class="relative">
+                <img [src]="game.homeTeam?.logoUrl || '/assets/default-team-logo.png'" 
+                     alt="Home Logo" 
+                     class="h-14 w-14 rounded-lg border-2 border-gray-600 shadow-md"
+                     (error)="onImageError($event)">
+                <div *ngIf="isWinning(game.homeScore, game.awayScore)" 
+                     class="absolute -top-1 -right-1 w-4 h-4 bg-yellow-500 rounded-full flex items-center justify-center">
+                  <svg class="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                  </svg>
+                </div>
+              </div>
+              <div>
+                <h3 class="text-lg font-bold text-white">{{ game.homeTeam?.name || 'Equipo Local' }}</h3>
+                <p class="text-sm text-gray-400">{{ game.homeTeam?.city || 'Ciudad' }} • Local</p>
+              </div>
+            </div>
+            <div class="text-right">
+              <div class="text-3xl font-bold" [ngClass]="isWinning(game.homeScore, game.awayScore) ? 'text-green-400' : 'text-gray-300'">
+                {{ game.homeScore || 0 }}
+              </div>
+            </div>
+          </div>
+
+          <!-- VS Divider -->
+          <div class="flex items-center justify-center my-2">
+            <div class="h-px bg-gradient-to-r from-transparent via-gray-600 to-transparent flex-1"></div>
+            <span class="px-3 text-xs font-semibold text-gray-500 bg-gray-800 rounded-full">VS</span>
+            <div class="h-px bg-gradient-to-r from-transparent via-gray-600 to-transparent flex-1"></div>
+          </div>
+
+          <!-- Away Team -->
+          <div class="flex items-center justify-between">
+            <div class="flex items-center space-x-4">
+              <div class="relative">
+                <img [src]="game.awayTeam?.logoUrl || '/assets/default-team-logo.png'" 
+                     alt="Away Logo" 
+                     class="h-14 w-14 rounded-lg border-2 border-gray-600 shadow-md"
+                     (error)="onImageError($event)">
+                <div *ngIf="isWinning(game.awayScore, game.homeScore)" 
+                     class="absolute -top-1 -right-1 w-4 h-4 bg-yellow-500 rounded-full flex items-center justify-center">
+                  <svg class="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                  </svg>
+                </div>
+              </div>
+              <div>
+                <h3 class="text-lg font-bold text-white">{{ game.awayTeam?.name || 'Equipo Visitante' }}</h3>
+                <p class="text-sm text-gray-400">{{ game.awayTeam?.city || 'Ciudad' }} • Visitante</p>
+              </div>
+            </div>
+            <div class="text-right">
+              <div class="text-3xl font-bold" [ngClass]="isWinning(game.awayScore, game.homeScore) ? 'text-green-400' : 'text-gray-300'">
+                {{ game.awayScore || 0 }}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Game Info -->
+        <div class="grid grid-cols-3 gap-4 mb-6 bg-gray-700 bg-opacity-50 rounded-lg p-3">
+          <div class="text-center">
+            <p class="text-xs text-gray-400 uppercase tracking-wide">Período</p>
+            <p class="text-lg font-bold text-blue-400">{{ game.currentPeriod || 1 }}</p>
+          </div>
+          <div class="text-center">
+            <p class="text-xs text-gray-400 uppercase tracking-wide">Duración</p>
+            <p class="text-lg font-bold text-purple-400">{{ getPeriodDuration(game) }}</p>
+          </div>
+          <div class="text-center">
+            <p class="text-xs text-gray-400 uppercase tracking-wide">Diferencia</p>
+            <p class="text-lg font-bold text-yellow-400">{{ getScoreDifference(game) }}</p>
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="flex space-x-3">
+          <button 
+            (click)="irAScoreboard(game.gameId)"
+            class="flex-1 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-medium py-3 px-4 rounded-lg transition duration-200 flex items-center justify-center space-x-2 shadow-md">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+            </svg>
+            <span>Marcador</span>
+          </button>
+          
+          <button 
+            (click)="irAControlPanel(game.gameId)"
+            class="flex-1 bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white font-medium py-3 px-4 rounded-lg transition duration-200 flex items-center justify-center space-x-2 shadow-md">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4"></path>
+            </svg>
+            <span>Control</span>
+          </button>
+
+          <button 
+            (click)="deleteGame(game.gameId)"
+            class="bg-red-600 hover:bg-red-700 text-white font-medium py-3 px-4 rounded-lg transition duration-200 flex items-center justify-center shadow-md">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+            </svg>
+          </button>
+        </div>
       </div>
     </div>
   </div>

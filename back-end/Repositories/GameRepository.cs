@@ -14,12 +14,16 @@ public class GameRepository : IGameRepository
 
     public async Task<IEnumerable<Game>> GetAll()
     {
-        return await _context.Games.ToListAsync();
+        return await _context.Games.Include(g => g.HomeTeam)
+                                     .Include(g => g.AwayTeam)
+                                     .ToListAsync();
     }
 
     public async Task<Game?> GetById(int id)
     {
-        return await _context.Games.FindAsync(id);
+        return await _context.Games.Include(g => g.HomeTeam)
+                                     .Include(g => g.AwayTeam)
+                                     .FirstOrDefaultAsync(g => g.GameId == id);
     }
 
     public async Task<Game> Add(Game game)

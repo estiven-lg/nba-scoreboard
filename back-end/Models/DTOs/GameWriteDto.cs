@@ -13,7 +13,6 @@ public class GameWriteDto
     [Required]
     public DateTime GameDate { get; set; }
 
-    public int? PeriodSeconds { get; set; }
 }
 
 public class TimeDto

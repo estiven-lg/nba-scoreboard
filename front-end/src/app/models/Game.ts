@@ -1,13 +1,15 @@
+import { Team } from "./Team";
+
 export interface Game {
   gameId: number;
   homeTeamId: number;
   awayTeamId: number;
-  homeTeam?: any;
-  awayTeam?: any;
-  gameDate: Date;
+  homeTeam: Team;
+  awayTeam: Team;
+  gameDate: string;
   gameStatus: string;
-  homeTeamScore: number;
-  awayTeamScore: number;
+  homeScore: number;
+  awayScore: number;
   currentPeriod: number;
   timeRemaining: string;
 }
