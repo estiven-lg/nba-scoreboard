@@ -9,10 +9,28 @@ public class TeamService(ITeamRepository teamRepo) : ITeamService
 {
     private readonly ITeamRepository _teamRepo = teamRepo;
 
-    public async Task<IEnumerable<TeamReadDto>> GetAllAsync()
+    public async Task<IEnumerable<TeamReadDto>> GetAllAsync(string? search = null)
     {
         var teams = await _teamRepo.GetAll();
-        return teams.Select(MapToReadDto);
+        
+        // Aplicar filtro de búsqueda si se proporciona
+        if (!string.IsNullOrWhiteSpace(search))
+        {
+            var searchTerm = search.ToLower().Trim();
+            teams = teams.Where(t => 
+                t.Name.ToLower().Contains(searchTerm) ||
+                (t.City != null && t.City.ToLower().Contains(searchTerm))
+            ).ToList();
+        }
+
+        var teamDtos = new List<TeamReadDto>();
+        
+        foreach (var team in teams)
+        {
+            teamDtos.Add(MapToReadDto(team));
+        }
+        
+        return teamDtos;
     }
 
     public async Task<TeamReadDto?> GetByIdAsync(int id)

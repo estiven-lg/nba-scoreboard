@@ -19,9 +19,9 @@ public class PlayersController : ControllerBase
 
 
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<PlayerReadDto>>> GetAllPlayers()
+    public async Task<ActionResult<IEnumerable<PlayerReadDto>>> GetAllPlayers([FromQuery] string? search = null)
     {
-        var players = await _playerService.GetAllAsync();
+        var players = await _playerService.GetAllAsync(search);
         return Ok(players);
     }
 

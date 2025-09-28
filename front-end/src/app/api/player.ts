@@ -20,6 +20,11 @@ export class PlayerService {
     return firstValueFrom(this.http.get<Player[]>(this.baseUrl));
   }
 
+  searchPlayers(term: string): Promise<Player[]> {
+    const url = term ? `${this.baseUrl}?search=${term}` : this.baseUrl;
+    return firstValueFrom(this.http.get<Player[]>(url));
+  }
+
   updatePlayer(id: number, player: PlayerWriteDto): Promise<void> {
     return firstValueFrom(this.http.put<void>(`${this.baseUrl}/${id}`, player));
   }

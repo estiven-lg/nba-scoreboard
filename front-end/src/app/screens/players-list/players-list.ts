@@ -28,7 +28,9 @@ export class PlayersListComponent implements OnInit {
   selectedPlayer = signal<Player | null>(null);
   tempEditedPlayer = signal<Player | null>(null);
 
-  constructor(private api: Api ) {}
+  searchTerm = signal<string>('');           // Término actual
+
+  constructor(private api: Api) { }
 
   ngOnInit() {
     this.loadPlayers();
@@ -46,33 +48,33 @@ export class PlayersListComponent implements OnInit {
     }
   }
 
-async onConfirmSave() {
-  if (this.tempEditedPlayer() && this.selectedPlayer()) {
-    try {
-      const updatedDto = this.mapToWriteDto(this.tempEditedPlayer()!);
+  async onConfirmSave() {
+    if (this.tempEditedPlayer() && this.selectedPlayer()) {
+      try {
+        const updatedDto = this.mapToWriteDto(this.tempEditedPlayer()!);
 
-      await this.api.player.updatePlayer(
-        this.selectedPlayer()!.playerId,
-        updatedDto
-      );
+        await this.api.player.updatePlayer(
+          this.selectedPlayer()!.playerId,
+          updatedDto
+        );
 
-      this.selectedPlayer.set(this.tempEditedPlayer());
+        this.selectedPlayer.set(this.tempEditedPlayer());
 
-      this.showSaveConfirmModal.set(false);
-      this.showEditModal.set(false);
-      this.showDetailsModal.set(true);
+        this.showSaveConfirmModal.set(false);
+        this.showEditModal.set(false);
+        this.showDetailsModal.set(true);
 
-      this.loadPlayers();
-    } catch (e: any) {
-      this.error.set(e.message);
+        this.loadPlayers();
+      } catch (e: any) {
+        this.error.set(e.message);
+      }
     }
   }
-}
 
-cancelSaveConfirm() {
-  this.showSaveConfirmModal.set(false);
-  this.showEditModal.set(true);
-}
+  cancelSaveConfirm() {
+    this.showSaveConfirmModal.set(false);
+    this.showEditModal.set(true);
+  }
 
   onSaveEdit(form: NgForm) {
     if (form.valid) {
@@ -81,23 +83,23 @@ cancelSaveConfirm() {
     }
   }
 
-async onConfirmDelete() {
-  if (this.selectedPlayer()) {
-    try {
-      await this.api.player.deletePlayer(this.selectedPlayer()!.playerId);
+  async onConfirmDelete() {
+    if (this.selectedPlayer()) {
+      try {
+        await this.api.player.deletePlayer(this.selectedPlayer()!.playerId);
 
-      this.showDeleteModal.set(false);
-      this.showDetailsModal.set(false);
+        this.showDeleteModal.set(false);
+        this.showDetailsModal.set(false);
 
-      this.selectedPlayer.set(null);
-      this.tempEditedPlayer.set(null);
+        this.selectedPlayer.set(null);
+        this.tempEditedPlayer.set(null);
 
-      this.loadPlayers();
-    } catch (e: any) {
-      this.error.set(e.message);
+        this.loadPlayers();
+      } catch (e: any) {
+        this.error.set(e.message);
+      }
     }
   }
-}
 
   async onCreatePlayer(form: NgForm) {
     if (form.valid) {
@@ -164,24 +166,44 @@ async onConfirmDelete() {
     this.selectedPlayer.set(null);
     this.tempEditedPlayer.set(null);
   }
-  
-private mapToWriteDto(player: Player): PlayerWriteDto {
-  return {
-    fullName: player.fullName,
-    jerseyNumber: player.jerseyNumber,
-    position: player.position,
-    teamId: player.teamId,
-    height: player.height,
-    age: player.age,
-    nationality: player.nationality,
-  };
-}
 
-onRowClick(player: Player) {
-  // En móviles usamos click simple
-  if (window.innerWidth < 640) { // breakpoint sm
-    this.openDetailsModal(player);
+  onSearchChange(event: Event) {
+    const input = event.target as HTMLInputElement;
+    const value = input.value;
+    this.searchTerm.set(value);
   }
-}
+
+  async makeSearch() {
+    const term: string = this.searchTerm().trim();
+    this.isLoading.set(true);
+    this.error.set(null);
+    try {
+      const players = await this.api.player.searchPlayers(term);
+      this.players.set(players);
+    } catch (e: any) {
+      this.error.set(e.message);
+    } finally {
+      this.isLoading.set(false);
+    }
+  }
+
+  private mapToWriteDto(player: Player): PlayerWriteDto {
+    return {
+      fullName: player.fullName,
+      jerseyNumber: player.jerseyNumber,
+      position: player.position,
+      teamId: player.teamId,
+      height: player.height,
+      age: player.age,
+      nationality: player.nationality,
+    };
+  }
+
+  onRowClick(player: Player) {
+    // En móviles usamos click simple
+    if (window.innerWidth < 640) { // breakpoint sm
+      this.openDetailsModal(player);
+    }
+  }
 
 }

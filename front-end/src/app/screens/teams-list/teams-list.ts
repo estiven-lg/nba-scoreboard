@@ -3,9 +3,9 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Api } from '../../api/api';
 import { Team, TeamWriteDto } from '../../models';
-import { 
+import {
   TeamDetailsModalComponent,
-  TeamEditModalComponent, 
+  TeamEditModalComponent,
   TeamDeleteModalComponent,
   TeamCreateModalComponent,
   TeamSaveConfirmModalComponent
@@ -15,7 +15,7 @@ import {
   selector: 'app-teams-list',
   standalone: true,
   imports: [
-    CommonModule, 
+    CommonModule,
     FormsModule,
     TeamDetailsModalComponent,
     TeamEditModalComponent,
@@ -40,8 +40,31 @@ export class TeamsListComponent implements OnInit {
   showDeleteModal = signal(false);
   showCreateModal = signal(false);
   showSaveConfirmModal = signal(false);
+  searchTerm = signal<string>('');
 
-  constructor(private api: Api) {}
+
+  onSearchChange(event: Event) {
+    const input = event.target as HTMLInputElement;
+    this.searchTerm.set(input.value);
+  }
+
+  async makeSearch() {
+
+    const term: string = this.searchTerm().trim();
+    this.loading.set(true);
+    this.error.set(null);
+    try {
+      const teams = await this.api.team.searchTeams(term);
+      this.teams.set(teams);
+    } catch (e: any) {
+      this.error.set(e.message);
+    } finally {
+      this.loading.set(false);
+    }
+
+  }
+
+  constructor(private api: Api) { }
 
   async ngOnInit() {
     await this.loadTeams();
@@ -116,7 +139,7 @@ export class TeamsListComponent implements OnInit {
   async onCreateTeam(form: any) {
     try {
       if (!form.valid) return;
-      
+
       const teamData: TeamWriteDto = {
         name: form.value.name,
         city: form.value.city || null,
@@ -135,7 +158,7 @@ export class TeamsListComponent implements OnInit {
   async onSaveEdit(form: any) {
     try {
       if (!form.valid) return;
-      
+
       const team = this.selectedTeam();
       if (!team) return;
 

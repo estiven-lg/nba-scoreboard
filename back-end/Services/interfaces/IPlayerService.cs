@@ -5,7 +5,7 @@ namespace GameDataService.Services.interfaces;
 
 public interface IPlayerService
 {
-    Task<IEnumerable<PlayerReadDto>> GetAllAsync();
+    Task<IEnumerable<PlayerReadDto>> GetAllAsync(string? search = null);
     Task<PlayerReadDto?> GetByIdAsync(int id);
     Task<PlayerReadDto> AddAsync(PlayerWriteDto playerDto);
     Task<PlayerReadDto?> UpdateAsync(int id, PlayerWriteDto playerDto);

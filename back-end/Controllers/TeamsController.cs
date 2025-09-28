@@ -18,9 +18,9 @@ public class TeamsController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<TeamReadDto>>> GetAllTeams()
+    public async Task<ActionResult<IEnumerable<TeamReadDto>>> GetAllTeams([FromQuery] string? search = null)
     {
-        var teams = await _teamService.GetAllAsync();
+        var teams = await _teamService.GetAllAsync(search);
         return Ok(teams);
     }
 

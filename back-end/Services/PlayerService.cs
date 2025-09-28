@@ -10,10 +10,30 @@ public class PlayerService(IPlayerRepository playerRepo, ITeamRepository teamRep
     private readonly IPlayerRepository _playerRepo = playerRepo;
     private readonly ITeamRepository _teamRepo = teamRepo;
 
-    public async Task<IEnumerable<PlayerReadDto>> GetAllAsync()
+    public async Task<IEnumerable<PlayerReadDto>> GetAllAsync(string? search = null)
     {
         var players = await _playerRepo.GetAll();
-        return players.Select(MapToReadDto);
+        
+        // Aplicar filtro de búsqueda si se proporciona
+        if (!string.IsNullOrWhiteSpace(search))
+        {
+            var searchTerm = search.ToLower().Trim();
+            players = players.Where(p => 
+                p.FullName.ToLower().Contains(searchTerm) ||
+                p.Position.ToLower().Contains(searchTerm) ||
+                (p.Nationality != null && p.Nationality.ToLower().Contains(searchTerm)) ||
+                p.JerseyNumber.ToString().Contains(searchTerm)
+            ).ToList();
+        }
+
+        var playerDtos = new List<PlayerReadDto>();
+        
+        foreach (var player in players)
+        {
+            playerDtos.Add(MapToReadDto(player));
+        }
+        
+        return playerDtos;
     }
 
     public async Task<PlayerReadDto?> GetByIdAsync(int id)

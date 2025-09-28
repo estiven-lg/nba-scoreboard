@@ -16,8 +16,14 @@ export class TeamService {
   // ====================
   // 🏀 Team Management
   // ====================
-  getTeams(): Promise<Team[]> {
-    return firstValueFrom(this.http.get<Team[]>(this.baseUrl));
+  getTeams(search?: string): Promise<Team[]> {
+    const url = search ? `${this.baseUrl}?search=${search}` : this.baseUrl;
+    return firstValueFrom(this.http.get<Team[]>(url));
+  }
+
+  searchTeams(term: string): Promise<Team[]> {
+    const url = term ? `${this.baseUrl}?search=${term}` : this.baseUrl;
+    return firstValueFrom(this.http.get<Team[]>(url));
   }
 
   getTeamById(id: string | number): Promise<Team> {
