@@ -1,1 +1,27 @@
- <router-outlet></router-outlet>
+ <nav class="navbar">
+  <div class="nav-container">
+    <div class="nav-logo">
+      <mat-icon class="logo-icon">sports_basketball</mat-icon>
+      <span class="logo-text">NBA Scoreboard</span>
+    </div>
+    
+    <div class="nav-menu">
+      <a routerLink="/games" routerLinkActive="active" class="nav-link">
+        <mat-icon>event</mat-icon>
+        <span>Games</span>
+      </a>
+      <a routerLink="/players" routerLinkActive="active" class="nav-link">
+        <mat-icon>person</mat-icon>
+        <span>Players</span>
+      </a>
+      <a routerLink="/teams" routerLinkActive="active" class="nav-link">
+        <mat-icon>groups</mat-icon>
+        <span>Teams</span>
+      </a>
+    </div>
+  </div>
+</nav>
+
+<main class="main-content">
+  <router-outlet></router-outlet>
+</main>
