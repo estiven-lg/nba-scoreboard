@@ -1,35 +1,13 @@
-
 services:
-  traefik:
-    image: traefik:v2.11
-    container_name: traefik
-    command:
-      - "--api.insecure=true" # Solo para desarrollo
-      - "--providers.docker=true"
-      - "--entrypoints.web.address=:81"
-      - "--entrypoints.websecure.address=:443"
-      - "--certificatesresolvers.myresolver.acme.tlschallenge=true"
-      - "--certificatesresolvers.myresolver.acme.email=laferre.estiven@gmail.com"
-      - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - "/var/run/docker.sock:/var/run/docker.sock:ro"
-      - "letsencrypt:/letsencrypt"
-    networks:
-      - nba-vps
-
   frontend:
     build:
-      context: ./front-end
-      dockerfile: Dockerfile
+     context: ./front-end
+     dockerfile: Dockerfile
     container_name: frontend
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.frontend.rule=Host(`nba-scoreboard.duckdns.org`)"
-      - "traefik.http.routers.frontend.entrypoints=websecure"
-      - "traefik.http.routers.frontend.tls.certresolver=myresolver"
+    ports:
+     - "${front_port}:80"
+    depends_on:
+     - backend
     networks:
       - nba-vps
   backend:
@@ -65,7 +43,6 @@ services:
 
 volumes:
   sql_data:
-  letsencrypt:
 
 networks:
   nba-vps:
