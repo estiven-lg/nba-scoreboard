@@ -13,4 +13,4 @@ COPY wait-for-it.sh /wait-for-it.sh
 RUN chmod +x /wait-for-it.sh
 
 ENV DOTNET_RUNNING_IN_CONTAINER=true
-ENTRYPOINT ["/wait-for-it.sh", "db:1433", "dotnet", "GameDataService.dll"]
+ENTRYPOINT ["/wait-for-it.sh", "db:1433","--" ,"dotnet", "GameDataService.dll"]
