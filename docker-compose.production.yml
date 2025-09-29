@@ -17,6 +17,8 @@ services:
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
       - "./letsencrypt:/letsencrypt"
+    networks:
+      - nba-vps
   frontend:
     build:
       context: ./front-end
