@@ -11,6 +11,10 @@ services:
      - backend
     networks:
       - nba-vps
+    volumes:
+      - /etc/letsencrypt/live/nba-scoreboard.duckdns.org/fullchain.pem:/etc/ssl/certs/fullchain.pem
+      - /etc/letsencrypt/live/nba-scoreboard.duckdns.org/privkey.pem:/etc/ssl/private/privkey.pem
+
   backend:
     build:
       context: ./back-end
@@ -44,8 +48,6 @@ services:
 
 volumes:
   sql_data:
-  - /etc/letsencrypt/live/nba-scoreboard.duckdns.org/fullchain.pem:/etc/ssl/certs/fullchain.pem
-  - /etc/letsencrypt/live/nba-scoreboard.duckdns.org/privkey.pem:/etc/ssl/private/privkey.pem
 
 networks:
   nba-vps:
