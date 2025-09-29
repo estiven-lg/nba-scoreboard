@@ -5,7 +5,8 @@ services:
      dockerfile: Dockerfile
     container_name: frontend
     ports:
-     - "${front_port}:80"
+     - "80:80"
+     - "443:443"
     depends_on:
      - backend
     networks:
