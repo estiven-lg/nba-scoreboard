@@ -1,46 +1,37 @@
+
 services:
   traefik:
-    image: traefik:v2.10
+    image: traefik:v2.11
     container_name: traefik
-    restart: unless-stopped
     command:
-      - "--api.insecure=true"
+      - "--api.insecure=true" # Solo para desarrollo
       - "--providers.docker=true"
-      - "--providers.docker.exposedbydefault=false"
       - "--entrypoints.web.address=:80"
       - "--entrypoints.websecure.address=:443"
-      - "--certificatesresolvers.letsresolver.acme.tlschallenge=true"
-      - "--certificatesresolvers.letsresolver.acme.email=tuemail@dominio.com"
-      - "--certificatesresolvers.letsresolver.acme.storage=/letsencrypt/acme.json"
+      - "--certificatesresolvers.myresolver.acme.tlschallenge=true"
+      - "--certificatesresolvers.myresolver.acme.email=tu-email@dominio.com"
+      - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
     ports:
       - "80:80"
       - "443:443"
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
-      - "./letsencrypt:/letsencrypt"
+      - "letsencrypt:/letsencrypt"
     networks:
       - nba-vps
-    labels:
-      - "traefik.http.middlewares.https-redirect.redirectscheme.scheme=https"
-      - "traefik.http.middlewares.https-redirect.redirectscheme.permanent=true"
 
   frontend:
     build:
       context: ./front-end
       dockerfile: Dockerfile
     container_name: frontend
-    depends_on:
-      - backend
-    restart: always
-    networks:
-      - nba-vps
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.frontend.rule=Host(`nba-scoreboard.duckdns.org`)"
       - "traefik.http.routers.frontend.entrypoints=websecure"
-      - "traefik.http.routers.frontend.tls.certresolver=letsresolver"
-      - "traefik.http.services.frontend.loadbalancer.server.port=80" 
-      
+      - "traefik.http.routers.frontend.tls.certresolver=myresolver"
+    networks:
+      - nba-vps
   backend:
     build:
       context: ./back-end
@@ -50,13 +41,12 @@ services:
     environment:
       CONNECTION_STRING: "Server=db;Database=${MSSQL_DB};User Id=sa;Password=${MSSQL_SA_PASSWORD};TrustServerCertificate=True;"
       JWT_SECRET: ${JWT_SECRET}
-    expose:
-      - "5000"
+    ports:
+      - "5000:5000"
     depends_on:
       - db
     networks:
       - nba-vps
-
   db:
     image: mcr.microsoft.com/mssql/server:2022-latest
     container_name: db
@@ -75,6 +65,7 @@ services:
 
 volumes:
   sql_data:
+  letsencrypt:
 
 networks:
   nba-vps:
