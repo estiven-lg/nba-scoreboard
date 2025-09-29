@@ -1,16 +1,17 @@
 services:
+      
   frontend:
     build:
      context: ./front-end
      dockerfile: Dockerfile
     container_name: frontend
     ports:
-      - "${front_port}:80"
+     - "${front_port}:80"
     depends_on:
      - backend
     networks:
       - nba-vps
-
+      
   backend:
     build:
       context: ./back-end
@@ -26,6 +27,7 @@ services:
       - db
     networks:
       - nba-vps
+
   db:
     image: mcr.microsoft.com/mssql/server:2022-latest
     container_name: db
