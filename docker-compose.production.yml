@@ -4,6 +4,7 @@ services:
      context: ./front-end
      dockerfile: Dockerfile
     container_name: frontend
+    env_file: .env
     ports:
      - "${front_port}:80"
     depends_on:
