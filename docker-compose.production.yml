@@ -11,6 +11,7 @@ services:
      - backend
     networks:
       - nba-vps
+    restart: always
       
   backend:
     build:
@@ -27,6 +28,7 @@ services:
       - db
     networks:
       - nba-vps
+    restart: always
   db:
     image: mcr.microsoft.com/mssql/server:2022-latest
     container_name: db
@@ -42,6 +44,7 @@ services:
       - sql_data:/var/opt/mssql
     networks:
       - nba-vps
+    restart: always
 
 volumes:
   sql_data:

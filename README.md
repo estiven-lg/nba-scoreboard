@@ -1,59 +1,89 @@
-# NbaScoreboard
+# NBA-scoreboard
+## Development
+### Front-end
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 20.1.6.
-
-## Development server
-
-To start a local development server, run:
-
-```bash
-ng serve
+para el front es nesesario usar la version de node 22
+```
+$ nvm use 22
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+instalamos dependencias
+```
+$ npm install -g @angular/cli
+$ ng version
+$ npm install
 
-## Code scaffolding
+```
+Ejecutar el servidor de desarrollo
+```
+$ ng serve
+```
+### Back-end
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
-
-```bash
-ng generate component component-name
+tener instalado .Net version 8
+```
+$ dotnet --version
+8.0.413
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
-
-```bash
-ng generate --help
+Descargar dependencias de NuGet
+```
+$ dotnet restore
 ```
 
-## Building
+Configurar variables de entorno en Revisa *appsettings.json*
 
-To build the project run:
-
-```bash
-ng build
+```
+{
+  "ConnectionStrings": {
+    "DefaultConnection": "Server=localhost;Database=nba;User Id=sa;Password=Abcd_1234;TrustServerCertificate=True;"
+  },
+  "JwtSecret": "A6.......J",
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft.AspNetCore": "Warning"
+    }
+  },
+  "AllowedHosts": "*"
+}
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+Aplicar migraciones a la base de datos
 
-## Running unit tests
-
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
-
-```bash
-ng test
+```
+$ dotnet ef database update
 ```
 
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
+Ejecutar la API
+```
+$ dotnet run
 ```
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
 
-## Additional Resources
+Probar la API en : *https://localhost:5204/swagger*
 
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+## Produccion
+para produccion hacemos uso de docker compose
+
+```
+$ docker compose -f docker-compose.production.yml up --build -d
+```
+
+es importante el crear las variables de entorno *.env*
+
+```
+# front variables
+front_port=8585
+
+# back variables
+ASPNETCORE_ENVIRONMENT=Production
+ASPNETCORE_URLS=http://+:5000
+JWT_SECRET=A6!........J
+# CONNECTION_STRING=Server=db;Database=${MSSQL_DB};User Id=${MSSQL_USER};Password=${MSSQL_SA_PASSWORD};TrustServerCertificate=True;
+
+# Db variables
+MSSQL_SA_PASSWORD=Abcd_1234
+MSSQL_DB=nba
+# MSSQL_PASSWORD=Abcd_1234
+```
