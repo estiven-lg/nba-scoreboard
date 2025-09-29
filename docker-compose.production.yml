@@ -6,6 +6,7 @@ services:
     command:
       - "--api.insecure=true"
       - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
       - "--entrypoints.web.address=:80"
       - "--entrypoints.websecure.address=:443"
       - "--certificatesresolvers.letsresolver.acme.tlschallenge=true"
@@ -19,6 +20,10 @@ services:
       - "./letsencrypt:/letsencrypt"
     networks:
       - nba-vps
+    labels:
+      - "traefik.http.middlewares.https-redirect.redirectscheme.scheme=https"
+      - "traefik.http.middlewares.https-redirect.redirectscheme.permanent=true"
+
   frontend:
     build:
       context: ./front-end
@@ -31,11 +36,10 @@ services:
       - nba-vps
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.nba.rule=Host(`nba-scoreboard.duckdns.org`)"
-      - "traefik.http.routers.nba.entrypoints=websecure"
-      - "traefik.http.routers.nba.tls.certresolver=letsresolver"
-      - "traefik.http.routers.nba.middlewares=https-redirect"
-      - "traefik.http.middlewares.https-redirect.redirectscheme.scheme=https"
+      - "traefik.http.routers.frontend.rule=Host(`nba-scoreboard.duckdns.org`)"
+      - "traefik.http.routers.frontend.entrypoints=websecure"
+      - "traefik.http.routers.frontend.tls.certresolver=letsresolver"
+      - "traefik.http.services.frontend.loadbalancer.server.port=80" 
       
   backend:
     build:
