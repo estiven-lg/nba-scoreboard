@@ -10,6 +10,9 @@ services:
      - backend
     networks:
       - nba-vps
+    volumes:
+      - ~/docker_ssl/certs/fullchain.pem:/etc/ssl/certs/fullchain.pem:ro
+      - ~/docker_ssl/private/privkey.pem:/etc/ssl/private/privkey.pem:ro
   backend:
     build:
       context: ./back-end
