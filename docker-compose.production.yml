@@ -1,33 +1,22 @@
 services:
-  nginx-proxy:
-    image: jwilder/nginx-proxy
-    container_name: nginx-proxy
+  traefik:
+    image: traefik:v2.12
+    container_name: traefik
+    restart: unless-stopped
+    command:
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.websecure.address=:443"
+      - "--certificatesresolvers.letsresolver.acme.tlschallenge=true"
+      - "--certificatesresolvers.letsresolver.acme.email=tuemail@dominio.com"
+      - "--certificatesresolvers.letsresolver.acme.storage=/letsencrypt/acme.json"
     ports:
       - "80:80"
       - "443:443"
     volumes:
-      - /var/run/docker.sock:/tmp/docker.sock:ro
-      - ./certs:/etc/nginx/certs:rw
-      - ./vhost.d:/etc/nginx/vhost.d
-      - ./html:/usr/share/nginx/html
-    networks:
-      - nba-vps
-
-  letsencrypt:
-    image: jrcs/letsencrypt-nginx-proxy-companion
-    container_name: nginx-letsencrypt
-    depends_on:
-      - nginx-proxy
-    environment:
-      - NGINX_PROXY_CONTAINER=nginx-proxy
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-      - ./certs:/etc/nginx/certs:rw
-      - ./vhost.d:/etc/nginx/vhost.d
-      - ./html:/usr/share/nginx/html
-    networks:
-      - nba-vps
-      
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+      - "./letsencrypt:/letsencrypt"
   frontend:
     build:
       context: ./front-end
@@ -35,15 +24,19 @@ services:
     container_name: frontend
     depends_on:
       - backend
-    environment:
-      VIRTUAL_HOST: nba-scoreboard.duckdns.org
-      LETSENCRYPT_HOST: nba-scoreboard.duckdns.org
-      LETSENCRYPT_EMAIL: laferre.estiven@gmail.com
-      LETSENCRYPT_TEST: "true"
-      HTTPS_METHOD: redirect
+    ports:
+      - "80:80"
+      - "443:443"
     restart: always
     networks:
       - nba-vps
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.nba.rule=Host(`nba-scoreboard.duckdns.org`)"
+      - "traefik.http.routers.nba.entrypoints=websecure"
+      - "traefik.http.routers.nba.tls.certresolver=letsresolver"
+      - "traefik.http.routers.nba.middlewares=https-redirect"
+      - "traefik.http.middlewares.https-redirect.redirectscheme.scheme=https"
       
   backend:
     build:
