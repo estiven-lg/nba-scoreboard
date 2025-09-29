@@ -5,14 +5,12 @@ services:
      dockerfile: Dockerfile
     container_name: frontend
     ports:
-     - "${front_port}:80"
+      - "${front_port}:80"
     depends_on:
      - backend
     networks:
       - nba-vps
-    volumes:
-      - ~/docker_ssl/certs/fullchain.pem:/etc/ssl/certs/fullchain.pem
-      - ~/docker_ssl/private/privkey.pem:/etc/ssl/private/privkey.pem
+      
   backend:
     build:
       context: ./back-end
