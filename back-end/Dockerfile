@@ -9,5 +9,8 @@ RUN dotnet publish -c Release -o /app
 FROM mcr.microsoft.com/dotnet/aspnet:8.0
 WORKDIR /app
 COPY --from=build /app .
+COPY wait-for-it.sh /wait-for-it.sh
+RUN chmod +x /wait-for-it.sh
+
 ENV DOTNET_RUNNING_IN_CONTAINER=true
-ENTRYPOINT ["dotnet", "GameDataService.dll"]
+ENTRYPOINT ["/wait-for-it.sh", "db:1433", "dotnet", "GameDataService.dll"]
