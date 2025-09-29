@@ -5,13 +5,12 @@ services:
      dockerfile: Dockerfile
     container_name: frontend
     ports:
-     - "80:80"
-     - "443:443"
+      - "${front_port}:80"
     depends_on:
      - backend
     networks:
       - nba-vps
-      
+
   backend:
     build:
       context: ./back-end
