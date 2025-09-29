@@ -6,10 +6,10 @@ services:
     command:
       - "--api.insecure=true" # Solo para desarrollo
       - "--providers.docker=true"
-      - "--entrypoints.web.address=:80"
+      - "--entrypoints.web.address=:81"
       - "--entrypoints.websecure.address=:443"
       - "--certificatesresolvers.myresolver.acme.tlschallenge=true"
-      - "--certificatesresolvers.myresolver.acme.email=tu-email@dominio.com"
+      - "--certificatesresolvers.myresolver.acme.email=laferre.estiven@gmail.com"
       - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
     ports:
       - "80:80"
