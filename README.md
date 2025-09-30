@@ -1,39 +1,55 @@
-# NBA-scoreboard
-## Development
-### Front-end
+# 🏀 NBA Scoreboard
 
-para el front es nesesario usar la version de node 22
-```
-$ nvm use 22
-```
+Proyecto que incluye un **front-end en Angular** y un **back-end en .NET 8**, con soporte para despliegue en **Docker Compose**.
 
-instalamos dependencias
-```
-$ npm install -g @angular/cli
-$ ng version
-$ npm install
+---
 
-```
-Ejecutar el servidor de desarrollo
-```
-$ ng serve
-```
-### Back-end
+## 🚀 Desarrollo
 
-tener instalado .Net version 8
-```
-$ dotnet --version
-8.0.413
+### 🔹 Front-end
+
+Requisitos:
+- Node.js **v22** (usando `nvm` recomendado)
+- Angular CLI
+
+```bash
+# Seleccionar versión de Node.js
+nvm use 22
+
+# Instalar dependencias globales
+npm install -g @angular/cli
+ng version
+
+# Instalar dependencias del proyecto
+npm install
 ```
 
-Descargar dependencias de NuGet
-```
-$ dotnet restore
+Ejecutar servidor de desarrollo:
+
+```bash
+ng serve
 ```
 
-Configurar variables de entorno en Revisa *appsettings.json*
+---
 
+### 🔹 Back-end
+
+Requisitos:
+- .NET **8.0.413**
+
+```bash
+dotnet --version
 ```
+
+Instalar dependencias:
+
+```bash
+dotnet restore
+```
+
+Configurar variables de entorno en `appsettings.json`:
+
+```json
 {
   "ConnectionStrings": {
     "DefaultConnection": "Server=localhost;Database=nba;User Id=sa;Password=Abcd_1234;TrustServerCertificate=True;"
@@ -49,41 +65,51 @@ Configurar variables de entorno en Revisa *appsettings.json*
 }
 ```
 
-Aplicar migraciones a la base de datos
+Aplicar migraciones a la base de datos:
 
-```
-$ dotnet ef database update
-```
-
-Ejecutar la API
-```
-$ dotnet run
+```bash
+dotnet ef database update
 ```
 
+Ejecutar la API:
 
-Probar la API en : *https://localhost:5204/swagger*
-
-## Produccion
-para produccion hacemos uso de docker compose
-
-```
-$ docker compose -f docker-compose.production.yml up --build -d
+```bash
+dotnet run
 ```
 
-es importante el crear las variables de entorno *.env*
+Probar la API en: 👉 [https://localhost:5204/swagger](https://localhost:5204/swagger)
 
+---
+
+## 🛠️ Producción
+
+Para el despliegue en producción se utiliza **Docker Compose**:
+
+```bash
+docker compose -f docker-compose.production.yml up --build -d
 ```
-# front variables
+
+Es necesario crear el archivo **`.env`** con las variables de entorno:
+
+```env
+# Front-end
 front_port=8585
 
-# back variables
+# Back-end
 ASPNETCORE_ENVIRONMENT=Production
 ASPNETCORE_URLS=http://+:5000
 JWT_SECRET=A6!........J
 # CONNECTION_STRING=Server=db;Database=${MSSQL_DB};User Id=${MSSQL_USER};Password=${MSSQL_SA_PASSWORD};TrustServerCertificate=True;
 
-# Db variables
+# Base de datos
 MSSQL_SA_PASSWORD=Abcd_1234
 MSSQL_DB=nba
 # MSSQL_PASSWORD=Abcd_1234
 ```
+
+---
+
+## 📌 Notas
+- Asegúrate de que **Docker** y **Docker Compose** estén instalados en tu entorno.
+- El puerto del front-end se puede configurar con la variable `front_port`.
+- Las credenciales y secretos deben almacenarse de forma segura (usa un gestor de secretos en producción).
