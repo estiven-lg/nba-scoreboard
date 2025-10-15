@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.AspNetCore.Identity;
+using RabbitMQ.Client;
 
 // using GameDataService.Services;
 
@@ -78,6 +79,9 @@ builder.Services.AddScoped<IPlayerService, PlayerService>();
 builder.Services.AddScoped<ITeamFoulService, TeamFoulService>();
 builder.Services.AddScoped<IPlayerFoulService, PlayerFoulService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
+
+
+builder.Services.AddScoped<SyncService, SyncService>();
 
 builder.Services.AddCors(options =>
 {

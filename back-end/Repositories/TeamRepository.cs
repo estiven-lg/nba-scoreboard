@@ -16,12 +16,12 @@ public class TeamRepository : ITeamRepository
 
     public async Task<IEnumerable<Team>> GetAll()
     {
-        return await _context.Teams.ToListAsync();
+        return await _context.Teams.Include(t => t.Players).ToListAsync();
     }
 
     public async Task<Team?> GetById(int id)
     {
-        return await _context.Teams.FirstOrDefaultAsync(t => t.TeamId == id);
+        return await _context.Teams.Include(t => t.Players).FirstOrDefaultAsync(t => t.TeamId == id);
     }
 
     public async Task<Team> Add(Team team)
@@ -33,7 +33,7 @@ public class TeamRepository : ITeamRepository
 
     public async Task<Team?> Update(Team team)
     {
-        var existing = await _context.Teams.FindAsync(team.TeamId);
+        var existing = await _context.Teams.Include(t => t.Players).FirstOrDefaultAsync(t => t.TeamId == team.TeamId);
         if (existing == null)
             return null;
         _context.Entry(existing).CurrentValues.SetValues(team);

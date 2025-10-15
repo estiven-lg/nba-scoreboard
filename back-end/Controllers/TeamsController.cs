@@ -3,6 +3,7 @@ using GameDataService.Services.interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using GameDataService.Models.DTOs;
+using GameDataService.Services;
 
 namespace GameDataService.Controllers;
 
@@ -11,10 +12,12 @@ namespace GameDataService.Controllers;
 public class TeamsController : ControllerBase
 {
     private readonly ITeamService _teamService;
+    private readonly SyncService _sync;
 
-    public TeamsController(ITeamService teamService)
+    public TeamsController(ITeamService teamService, SyncService sync)
     {
         _teamService = teamService;
+        _sync = sync;
     }
 
     [HttpGet]
@@ -40,6 +43,8 @@ public class TeamsController : ControllerBase
     public async Task<ActionResult<TeamReadDto>> CreateTeam(TeamWriteDto team)
     {
         var createdTeam = await _teamService.AddAsync(team);
+        var responseTeam = await _teamService.GetByIdAsync(createdTeam.TeamId);
+        _sync.SyncToQueue("POST", "Team", responseTeam);
         return CreatedAtAction(nameof(GetTeamById), new { id = createdTeam.TeamId }, createdTeam);
     }
 
@@ -53,6 +58,8 @@ public class TeamsController : ControllerBase
             return NotFound();
         }
 
+        _sync.SyncToQueue("PUT", "Team", updatedTeam);
+
         return Ok(updatedTeam);
     }
 
@@ -65,6 +72,8 @@ public class TeamsController : ControllerBase
         {
             return NotFound();
         }
+
+        _sync.SyncToQueue("DELETE", "Team", new { TeamId = id });
 
         return NoContent();
     }

@@ -26,6 +26,7 @@ services:
       - "5000:5000"
     depends_on:
       - db
+      - rabbitmq
     networks:
       - nba-vps
     restart: always
@@ -45,9 +46,40 @@ services:
     networks:
       - nba-vps
     restart: always
+    # report microservice
+  reportdb:
+    image: couchdb:3.3.1
+    container_name: reportdb
+    environment:
+      - COUCHDB_USER=admin
+      - COUCHDB_PASSWORD=password
+    ports:
+      - "5984:5984"
+    volumes:
+      - reportdb_data:/opt/couchdb/data
+    networks:
+      - nba-vps
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      - nba-vps
+    restart: always
+  replicator:
+    build: ./replicator
+    container_name: replicator
+    depends_on:
+      - rabbitmq
+      - reportdb
+    networks:
+      - nba-vps
 
 volumes:
   sql_data:
+  reportdb_data:
 
 networks:
   nba-vps:

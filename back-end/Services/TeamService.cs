@@ -71,7 +71,17 @@ public class TeamService(ITeamRepository teamRepo) : ITeamService
             TeamId = team.TeamId,
             Name = team.Name,
             City = team.City,
-            LogoUrl = team.LogoUrl
+            LogoUrl = team.LogoUrl,
+            Players = team.Players.Select(p => new PlayerReadDto
+            {
+                PlayerId = p.PlayerId,
+                FullName = p.FullName,
+                JerseyNumber = p.JerseyNumber,
+                Position = p.Position,
+                TeamId = p.TeamId,
+                Height = p.Height,
+                Age = p.Age,
+            }).ToArray()
         };
     }
 

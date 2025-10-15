@@ -3,6 +3,7 @@ using GameDataService.Services.interfaces;
 using Microsoft.AspNetCore.Mvc;
 using GameDataService.Models.DTOs;
 using Microsoft.AspNetCore.Authorization;
+using GameDataService.Services;
 
 namespace GameDataService.Controllers;
 
@@ -11,10 +12,12 @@ namespace GameDataService.Controllers;
 public class PlayersController : ControllerBase
 {
     private readonly IPlayerService _playerService;
+    private readonly SyncService _sync;
 
-    public PlayersController(IPlayerService playerService)
+    public PlayersController(IPlayerService playerService, SyncService sync)
     {
         _playerService = playerService;
+        _sync = sync;
     }
 
 
@@ -41,6 +44,8 @@ public class PlayersController : ControllerBase
     public async Task<ActionResult<PlayerReadDto>> CreatePlayer(PlayerWriteDto playerDto)
     {
         var createdPlayer = await _playerService.AddAsync(playerDto);
+        var responsePlayer = await _playerService.GetByIdAsync(createdPlayer.PlayerId);
+        _sync.SyncToQueue("POST", "Player", responsePlayer);
         return CreatedAtAction(nameof(GetPlayerById), new { id = createdPlayer.PlayerId }, createdPlayer);
     }
 
@@ -51,6 +56,8 @@ public class PlayersController : ControllerBase
         var updatedPlayer = await _playerService.UpdateAsync(id, playerDto);
         if (updatedPlayer == null)
             return NotFound();
+
+        _sync.SyncToQueue("PUT", "Player", updatedPlayer);
         
         return Ok(updatedPlayer);
     }
@@ -64,6 +71,8 @@ public class PlayersController : ControllerBase
         {
             return NotFound();
         }
+
+        _sync.SyncToQueue("DELETE", "Player", new { PlayerId = id });
 
         return NoContent();
     }

@@ -3,6 +3,7 @@ using GameDataService.Models.DTOs;
 using GameDataService.Services.interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
+using GameDataService.Services;
 
 namespace GameDataService.Controllers;
 
@@ -11,10 +12,12 @@ namespace GameDataService.Controllers;
 public class GamesController : ControllerBase
 {
     private readonly IGameService _gameService;
+    private readonly SyncService _sync;
 
-    public GamesController(IGameService gameService)
+    public GamesController(IGameService gameService, SyncService sync)
     {
         _gameService = gameService;
+        _sync = sync;
     }
 
     [Authorize]
@@ -24,7 +27,10 @@ public class GamesController : ControllerBase
         try
         {
             var game = await _gameService.CreateGame(dto);
-            return Ok(game);
+
+            var responseGame = await _gameService.GetGame(game.GameId);
+            _sync.SyncToQueue("POST", "Game", game);
+            return Ok(responseGame);
         }
         catch (InvalidOperationException ex)
         {
@@ -54,6 +60,7 @@ public class GamesController : ControllerBase
         {
             return NotFound();
         }
+        _sync.SyncToQueue("UPDATE", "Game", game);
         return Ok(game);
     }
 
@@ -63,6 +70,7 @@ public class GamesController : ControllerBase
     public async Task<ActionResult<GameReadDto>> HomePoints(int id, [FromBody] PointsDto dto)
     {
         var game = await _gameService.AddPointsAsync(id, home: true, dto.Points);
+        _sync.SyncToQueue("UPDATE", "Game", game);
         return Ok(game);
     }
 
@@ -71,6 +79,7 @@ public class GamesController : ControllerBase
     public async Task<ActionResult<GameReadDto>> VisitorPoints(int id, [FromBody] PointsDto dto)
     {
         var game = await _gameService.AddPointsAsync(id, home: false, dto.Points);
+        _sync.SyncToQueue("UPDATE", "Game", game);
         return Ok(game);
     }
 
@@ -79,6 +88,7 @@ public class GamesController : ControllerBase
     public async Task<ActionResult<GameReadDto>> HomeMinus(int id)
     {
         var game = await _gameService.SubtractPointAsync(id, home: true);
+        _sync.SyncToQueue("UPDATE", "Game", game);
         return Ok(game);
     }
 
@@ -87,6 +97,7 @@ public class GamesController : ControllerBase
     public async Task<ActionResult<GameReadDto>> VisitorMinus(int id)
     {
         var game = await _gameService.SubtractPointAsync(id, home: false);
+        _sync.SyncToQueue("UPDATE", "Game", game);
         return Ok(game);
     }
 
@@ -96,6 +107,7 @@ public class GamesController : ControllerBase
     public async Task<ActionResult<GameReadDto>> Start(int id, [FromBody] TimeDto dto)
     {
         var game = await _gameService.StartAsync(id, dto.PeriodSeconds);
+        _sync.SyncToQueue("UPDATE", "Game", game);
         return Ok(game);
     }
 
@@ -104,6 +116,7 @@ public class GamesController : ControllerBase
     public async Task<ActionResult<GameReadDto>> Pause(int id)
     {
         var game = await _gameService.PauseAsync(id);
+        _sync.SyncToQueue("UPDATE", "Game", game);
         return Ok(game);
     }
 
@@ -112,6 +125,7 @@ public class GamesController : ControllerBase
     public async Task<ActionResult<GameReadDto>> Resume(int id)
     {
         var game = await _gameService.ResumeAsync(id);
+        _sync.SyncToQueue("UPDATE", "Game", game);
         return Ok(game);
     }
 
@@ -119,6 +133,7 @@ public class GamesController : ControllerBase
     public async Task<ActionResult<GameReadDto>> ResetPeriod(int id, [FromBody] TimeDto dto)
     {
         var game = await _gameService.ResetPeriodAsync(id, dto.PeriodSeconds);
+        _sync.SyncToQueue("UPDATE", "Game", game);
         return Ok(game);
     }
 
@@ -128,6 +143,7 @@ public class GamesController : ControllerBase
     public async Task<ActionResult<GameReadDto>> NextPeriod(int id)
     {
         var game = await _gameService.NextPeriodAsync(id);
+        _sync.SyncToQueue("UPDATE", "Game", game);
         return Ok(game);
     }
 
@@ -136,6 +152,7 @@ public class GamesController : ControllerBase
     public async Task<ActionResult<GameReadDto>> PreviousPeriod(int id)
     {
         var game = await _gameService.PreviousPeriodAsync(id);
+        _sync.SyncToQueue("UPDATE", "Game", game);
         return Ok(game);
     }
 
@@ -145,6 +162,7 @@ public class GamesController : ControllerBase
     public async Task<ActionResult<GameReadDto>> ResetGame(int id)
     {
         var game = await _gameService.ResetGameAsync(id);
+        _sync.SyncToQueue("UPDATE", "Game", game);
         return Ok(game);
     }
 
@@ -153,6 +171,7 @@ public class GamesController : ControllerBase
     public async Task<ActionResult<GameReadDto>> Suspend(int id)
     {
         var game = await _gameService.SuspendAsync(id);
+        _sync.SyncToQueue("UPDATE", "Game", game);
         return Ok(game);
     }
 
@@ -161,6 +180,7 @@ public class GamesController : ControllerBase
     public async Task<ActionResult<GameReadDto>> Finish(int id)
     {
         var game = await _gameService.FinishGameAsync(id);
+        _sync.SyncToQueue("UPDATE", "Game", game);
         return Ok(game);
     }
 
