@@ -12,7 +12,6 @@ router.get('/games/:id', generateReportGamesPlayers);
 
 // GET /reports/teams
 router.get('/teams', generateReportTeams);
-
 router.get('/teams/:id', generateReportTeamPlayers);
 
 

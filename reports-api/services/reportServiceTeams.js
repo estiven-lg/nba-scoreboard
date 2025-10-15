@@ -14,7 +14,7 @@ const header = require('../templates/header');
 const fs = require('fs');
 const path = require('path');
 
-async function generateReportTeams(res) {
+async function generateReportTeams(req, res) {
     try {
         const docs = await couch.getTeams();
 
