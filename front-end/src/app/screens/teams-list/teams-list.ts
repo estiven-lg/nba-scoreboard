@@ -1,3 +1,4 @@
+// front-end/src/app/screens/teams-list/teams-list.ts
 import { Component, signal, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -11,6 +12,7 @@ import {
   TeamSaveConfirmModalComponent
 } from './components';
 import { AuthService } from '@services/auth.service';
+import { ReportsService } from '@services/reports.service';
 
 @Component({
   selector: 'app-teams-list',
@@ -65,7 +67,11 @@ export class TeamsListComponent implements OnInit {
 
   }
 
-  constructor(private api: Api, public authService: AuthService) { }
+  constructor(
+    private api: Api,
+    public authService: AuthService,
+    private reportsService: ReportsService
+  ) { }
 
   async ngOnInit() {
     await this.loadTeams();
@@ -193,16 +199,43 @@ export class TeamsListComponent implements OnInit {
   }
 
   onConfirmSave() {
-    // Implementation for save confirmation if needed
     this.closeSaveToDetails();
   }
 
-  // Utility methods
   trackByTeamId(index: number, team: Team): number {
     return team.teamId;
   }
 
   clearError() {
     this.error.set(null);
+  }
+
+  async downloadTeamsReport() {
+    try {
+      this.loading.set(true);
+      this.error.set(null);
+      
+      this.reportsService.downloadTeamsReport().subscribe({
+        next: (blob: Blob) => {
+          if (blob && blob.size > 0 && blob.type === 'application/pdf') {
+            const filename = `reporte-equipos-${new Date().toISOString().split('T')[0]}.pdf`;
+            this.reportsService.downloadFile(blob, filename);
+            console.log('Reporte descargado exitosamente');
+          } else {
+            this.error.set('El archivo PDF está vacío o no es válido');
+          }
+          this.loading.set(false);
+        },
+        error: (error) => {
+          console.error('Error descargando reporte:', error);
+          this.error.set('Error al descargar el reporte de equipos. Verifica la conexión con el servidor.');
+          this.loading.set(false);
+        }
+      });
+    } catch (error) {
+      console.error('Error descargando reporte:', error);
+      this.error.set('Error al descargar el reporte de equipos');
+      this.loading.set(false);
+    }
   }
 }

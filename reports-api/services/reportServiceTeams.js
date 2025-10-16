@@ -1,3 +1,4 @@
+// reports-api/services/reportServiceTeams.js
 const PdfPrinter = require('pdfmake');
 const couch = require('../config/couchdb');
 const axios = require('axios');
@@ -20,7 +21,11 @@ async function generateReportTeams(req, res) {
 
         // Generar tabla con los equipos
         const body = [
-            [{ text: 'Nombre', bold: true }, { text: 'Ciudad', bold: true }, { text: 'Logo', bold: true }]
+            [
+                { text: 'Nombre', bold: true, fillColor: '#1976D2', color: 'white' }, 
+                { text: 'Ciudad', bold: true, fillColor: '#1976D2', color: 'white' }, 
+                { text: 'Logo', bold: true, fillColor: '#1976D2', color: 'white' }
+            ]
         ];
 
         for (const team of docs) {
@@ -39,31 +44,58 @@ async function generateReportTeams(req, res) {
             }
 
             body.push([
-                team.Name,
-                team.City,
-                imageData ? { image: imageData, width: 50 } : 'No logo'
+                team.Name || '—',
+                team.City || 'Sin ciudad',
+                imageData ? { image: imageData, width: 50, alignment: 'center' } : { text: 'No logo', alignment: 'center', color: '#757575' }
             ]);
         }
 
         const docDefinition = {
             content: [
                 header,
-                { text: 'Reporte de Equipos Registrados', style: 'title', margin: [0, 10, 0, 10] },
+                { 
+                    text: 'Reporte de Equipos Registrados', 
+                    style: 'title', 
+                    margin: [0, 10, 0, 20] 
+                },
+                {
+                    text: `Total de equipos: ${docs.length}`,
+                    style: 'subtitle',
+                    margin: [0, 0, 0, 10]
+                },
                 {
                     table: {
                         headerRows: 1,
-                        widths: ['*', '*', 60],
+                        widths: ['*', '*', 80],
                         body: body
+                    },
+                    layout: {
+                        fillColor: function (rowIndex) {
+                            return (rowIndex === 0) ? '#1976D2' : (rowIndex % 2 === 0 ? '#f5f5f5' : null);
+                        }
                     }
                 }
             ],
             styles: {
-                title: { fontSize: 16, bold: true }
-            }
+                title: { 
+                    fontSize: 18, 
+                    bold: true, 
+                    alignment: 'center',
+                    color: '#1976D2'
+                },
+                subtitle: {
+                    fontSize: 12,
+                    color: '#666666',
+                    alignment: 'center'
+                }
+            },
+            pageMargins: [40, 60, 40, 40]
         };
 
         const pdfDoc = printer.createPdfKitDocument(docDefinition);
         res.setHeader('Content-Type', 'application/pdf');
+        res.setHeader('Content-Disposition', 'inline; filename=reporte-equipos.pdf');
+        res.setHeader('Cache-Control', 'no-cache');
         pdfDoc.pipe(res);
         pdfDoc.end();
 
@@ -72,7 +104,6 @@ async function generateReportTeams(req, res) {
         res.status(500).json({ error: 'Error al generar el reporte' });
     }
 }
-
 
 async function generateReportTeamPlayers(req, res) {
     try {
@@ -162,6 +193,8 @@ async function generateReportTeamPlayers(req, res) {
         // Generar PDF
         const pdfDoc = printer.createPdfKitDocument(docDefinition);
         res.setHeader('Content-Type', 'application/pdf');
+        res.setHeader('Content-Disposition', 'inline; filename=reporte-equipo-jugadores.pdf');
+        res.setHeader('Cache-Control', 'no-cache');
         pdfDoc.pipe(res);
         pdfDoc.end();
 
