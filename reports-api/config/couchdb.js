@@ -1,7 +1,9 @@
-// config/couchdb.js
+// reports-api/config/couchdb.js
 const axios = require('axios');
 require('dotenv').config();
 
+
+const couchDbUrl = process.env.COUCHDB_URL || 'http://admin:password@localhost:5984/nba_players';
 
 const couchApi = axios.create({
     baseURL: process.env.COUCHDB_URL+'/nba_reports/',
@@ -13,7 +15,7 @@ const couch = {
     getPlayers: async () => {
         const response = await couchApi.post('_find/', {
             selector: { doc_type: "player" },
-
+            limit: 1000
         });
 
         return response.data.docs;
@@ -27,6 +29,7 @@ const couch = {
     getTeams: async () => {
         const response = await couchApi.post('_find/', {
             selector: { doc_type: "team" },
+            limit: 1000
         });
         return response.data.docs;
     },
@@ -39,6 +42,7 @@ const couch = {
     getGames: async () =>{
         const response = await couchApi.post('_find/', {
             selector: { doc_type: "game" },
+            limit: 1000
         });
         return response.data.docs;
     },
@@ -51,6 +55,7 @@ const couch = {
     getPlayersfaults: async (id) => {
         const response = await couchApi.post('_find/', {
             selector: { doc_type: "fault", PlayerID: id },
+            limit: 1000
         });
         return response.data.docs;
     }
