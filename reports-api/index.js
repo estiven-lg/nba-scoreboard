@@ -7,4 +7,4 @@ app.use(bodyParser.json());
 app.use('/reports', reportRoutes);
 
 const PORT = 3000;
-app.listen(PORT, () => console.log(`✅ API lista en http://localhost:${PORT}`));
+app.listen(PORT, () => console.log(`API lista en http://localhost:${PORT}`));

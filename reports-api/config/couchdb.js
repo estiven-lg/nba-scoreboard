@@ -1,8 +1,10 @@
 // config/couchdb.js
 const axios = require('axios');
+require('dotenv').config();
+
 
 const couchApi = axios.create({
-    baseURL: 'http://admin:password@localhost:5984/nba_players/',
+    baseURL: process.env.COUCHDB_URL+'/nba_reports/',
     timeout: 5000,
 });
 

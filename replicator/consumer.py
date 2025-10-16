@@ -5,12 +5,16 @@ import requests
 import time
 import logging
 
+from dotenv import load_dotenv
+import os
+
+load_dotenv() 
 # Configurar logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger()
 
-COUCH_URL = "http://admin:password@reportdb:5984/"
-COUCH_DB_URL = COUCH_URL + "nba_players/"
+COUCH_URL = os.getenv("COUCHDB_URL")
+COUCH_DB_URL = COUCH_URL + "/nba_reports/"
 
 def wait_for_services():
     """Esperar a que los servicios estén disponibles"""
@@ -33,7 +37,7 @@ def wait_for_services():
     # Esperar por CouchDB
     for i in range(30):
         try:
-            response = requests.get(COUCH_URL + "_utils/", timeout=5)
+            response = requests.get(COUCH_URL + "/_utils/", timeout=5)
             if response.status_code == 200:
                 logger.info("CouchDB is ready!")
                 break
@@ -50,15 +54,15 @@ def setup_couchdb():
     """Configurar la base de datos en CouchDB"""
     try:
         if requests.head(COUCH_DB_URL).status_code == 404:
-            logger.info("Creating database nba_players")
-            requests.put(COUCH_URL + "users")
-            requests.put(COUCH_URL + "_replicator")
-            requests.put(COUCH_URL + "_global_changes")
+            logger.info("Creating database nba_reports")
+            requests.put(COUCH_URL + "/users")
+            requests.put(COUCH_URL + "/_replicator")
+            requests.put(COUCH_URL + "/_global_changes")
             response = requests.put(COUCH_DB_URL)
 
             logger.info(f"Database created: {response.status_code}")
         else:
-            logger.info("Database nba_players already exists")
+            logger.info("Database nba_reports already exists")
     except Exception as e:
         logger.error(f"Error setting up CouchDB: {e}")
 

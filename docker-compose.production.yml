@@ -46,7 +46,7 @@ services:
     networks:
       - nba-vps
     restart: always
-    # report microservice
+  # report microservice
   reportdb:
     image: couchdb:3.3.1
     container_name: reportdb
@@ -71,11 +71,23 @@ services:
   replicator:
     build: ./replicator
     container_name: replicator
+    env_file: .env
     depends_on:
       - rabbitmq
       - reportdb
     networks:
       - nba-vps
+  reports-api:
+    build:
+     context: ./reports-api
+     dockerfile: Dockerfile
+    container_name: reports-api
+    env_file: .env
+    depends_on:
+     - reportdb
+    networks:
+      - nba-vps
+    restart: always
 
 volumes:
   sql_data:
