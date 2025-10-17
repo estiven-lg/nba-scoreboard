@@ -1,5 +1,5 @@
 // environment.development.ts
 export const environment = {
   production: false,
-  apiUrl: "http://localhost:5204"
+  apiUrl: "http://localhost:5000"
 };
