@@ -180,7 +180,7 @@ export class GameList {
 
   downloadGameReport(gameId: number): void {
     // redirect to reports/game/{gameId}
-    window.open(`/reports/game/${gameId}`, '_blank');
+    window.open(`/reports/games/${gameId}`, '_blank');
   }
 
 }
