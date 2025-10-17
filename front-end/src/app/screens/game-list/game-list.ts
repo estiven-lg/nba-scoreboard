@@ -173,4 +173,14 @@ export class GameList {
     }
   }
 
+  downloadGamesHistoryReport(): void {
+    // redirect to  reports/games
+      window.open('/reports/games', '_blank');
+  }
+
+  downloadGameReport(gameId: number): void {
+    // redirect to reports/game/{gameId}
+    window.open(`/reports/game/${gameId}`, '_blank');
+  }
+
 }

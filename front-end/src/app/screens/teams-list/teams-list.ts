@@ -209,4 +209,13 @@ export class TeamsListComponent implements OnInit {
     this.error.set(null);
   }
 
+  downloadTeamsPdf() {
+    // redirect to reports/team
+    window.open('/reports/teams', '_blank');
+  }
+
+  downloadTeamPdf(team: Team) {
+    const teamId = team.teamId;
+    window.open(`/reports/teams/${teamId}`, '_blank');
+  }
 }
