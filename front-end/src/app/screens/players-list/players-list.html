@@ -124,7 +124,7 @@
                     </path>
                   </svg>
                 </button>
-                <button (click)="downloadPlayerReport(player.playerId); $event.stopPropagation()"
+                <button *ngIf="authService.isAuthenticated()" (click)="downloadPlayerReport(player.playerId); $event.stopPropagation()"
                   class="bg-orange-600 hover:bg-orange-700 text-white font-medium py-1 px-2 rounded-md transition duration-200 flex items-center space-x-1"
                   title="Descargar reporte PDF">
                   <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

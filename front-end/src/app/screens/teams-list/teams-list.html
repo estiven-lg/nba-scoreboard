@@ -34,6 +34,7 @@
         <!-- Botón Descargar Reporte -->
         <button 
           (click)="downloadTeamsPdf()"
+          *ngIf="authService.isAuthenticated()"
           class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-6 rounded-lg transition duration-200         flex items-center justify-center space-x-2 whitespace-nowrap">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
@@ -127,6 +128,7 @@
             <span>Editar</span>
           </button>
           <button (click)="$event.stopPropagation(); downloadTeamPdf(team)"
+          *ngIf="authService.isAuthenticated()"
             class="flex-1 bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded-lg transition-colors duration-200 text-sm flex items-center justify-center space-x-1">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
