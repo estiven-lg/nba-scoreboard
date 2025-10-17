@@ -209,7 +209,7 @@ export class PlayersListComponent implements OnInit {
   }
 
   downloadPlayerReport(playerId: number): void {
-    // redirect to reports/player/{playerId}
-    window.open(`/reports/player/${playerId}`, '_blank');
+    // redirect to reports/players/{playerId}
+    window.open(`/reports/players/${playerId}`, '_blank');
   }
 }

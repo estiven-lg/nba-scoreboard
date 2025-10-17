@@ -4,7 +4,7 @@ const { generateReportPlayerStats } = require('../services/reportServicePlayers'
 const { generateReportTeams, generateReportTeamPlayers } = require('../services/reportServiceTeams');
 const { generateReportGames, generateReportGamesPlayers } = require('../services/reportServiceGames');
 // GET /reportes/player
-router.get('/players', generateReportPlayerStats);
+router.get('/players/:id', generateReportPlayerStats);
 
 // GET /reports/games
 router.get('/games', generateReportGames);
